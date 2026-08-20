@@ -4,41 +4,314 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
-<title>Coding-agent transcript viewer</title>
+<meta name="description" content="Client-side viewer for Codex, Claude Code, and Antigravity agent traces. Nothing leaves your browser.">
+<title>Agent Trace Viewer</title>
 <style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#17201d;--muted:#68716c;--line:#d8d3c7;--accent:#146c5b;--tool:#7253a5;--warn:#a54b24;--code:#14201c;--instruction:#b04d35}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button{font:inherit}header{padding:32px max(24px,calc((100vw - 1180px)/2));background:var(--ink);color:#fff}header h1{font:700 32px/1.1 ui-serif,Georgia,serif;margin:0 0 8px}header p{margin:0;color:#d8e4df;max-width:850px}.shell{max-width:1180px;margin:0 auto;padding:24px 24px 96px}.panel,.event{background:var(--paper);border:1px solid var(--line);border-radius:12px}.panel{padding:20px}.panel h2,.panel h3{margin:0 0 10px}.muted{color:var(--muted)}.warning{background:#fff1db;color:#5d351d;padding:12px 18px;border:1px solid #e5b67d;border-radius:8px;margin:0 0 20px}.empty{max-width:760px;margin:34px auto}.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}.source{min-width:0;border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:18px;text-align:left;cursor:pointer}.source strong{display:block;font-size:17px}.source span{display:block;color:var(--muted);font-size:13px;margin-top:5px;overflow-wrap:anywhere}.source.active{border-color:var(--accent);box-shadow:0 0 0 2px #146c5b22}.import-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.primary{border:0;background:var(--accent);color:#fff;border-radius:9px;padding:11px 17px;font-weight:700;cursor:pointer}.secondary{border:1px solid var(--line);background:var(--paper);border-radius:9px;padding:9px 14px;cursor:pointer}.privacy{display:flex;gap:9px;align-items:flex-start;color:var(--muted);margin-top:18px;font-size:13px}.privacy svg{flex:none;margin-top:2px}.error{display:none;background:#fde8e4;color:#762a1e;border:1px solid #e7a69b;padding:12px 14px;border-radius:8px;margin-top:16px}.loaded-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}.loaded-head h2{margin:0}.hero{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}.stat{background:#eef3ef;border-radius:8px;padding:12px}.stat strong{display:block;font-size:22px}.filters{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0}.filters button{border:1px solid var(--line);background:var(--paper);padding:8px 12px;border-radius:999px;cursor:pointer}.filters button.active{background:var(--accent);color:#fff;border-color:var(--accent)}.timeline{display:flex;flex-direction:column;gap:10px}.event{padding:14px 16px;border-left:5px solid var(--line)}.event.message{border-left-color:var(--accent)}.event.instruction{border-left-color:var(--instruction);background:#fff9f6}.event.tool_call,.event.tool_result{border-left-color:var(--tool)}.event.reasoning{border-left-color:#d4942b}.event.context,.event.state,.event.metadata,.event.unknown{border-left-color:#66869b}.event-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline}.badge{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--muted)}pre{white-space:pre-wrap;word-break:break-word;background:var(--code);color:#dff4ea;padding:13px;border-radius:8px;max-height:620px;overflow:auto;margin:10px 0 0;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}details summary{cursor:pointer;color:var(--muted);padding-top:6px}.matrix{width:100%;border-collapse:collapse}.matrix th,.matrix td{text-align:left;padding:11px;border-bottom:1px solid var(--line);vertical-align:top}.status{font-weight:700}.status.captured{color:#166b44}.status.partial{color:#9a5c16}.status.not-observed{color:#8a3b3b}.schema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.switcher{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:10;background:#111a17;color:#fff;border-radius:999px;padding:7px;display:none;gap:8px;align-items:center;box-shadow:0 8px 30px #0005}.switcher.visible{display:flex}.switcher button{border:0;border-radius:999px;background:#31433d;color:#fff;width:34px;height:34px;cursor:pointer}.switcher span{min-width:180px;text-align:center;font-weight:700}@media(max-width:700px){.source-grid,.hero{grid-template-columns:1fr}.shell{padding-left:14px;padding-right:14px}.loaded-head{display:block}.loaded-head button{margin-top:12px}.matrix{font-size:13px}}
-.filter-guide{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-top:18px}.filter-guide strong{font-size:14px}.filter-guide span{font-size:13px;color:var(--muted)}.filters button:not(.active){color:var(--muted);background:transparent;border-style:dashed}.event.ghost{min-height:42px;padding:8px 14px;opacity:.38;background:transparent;border-style:dashed;cursor:pointer}.event.ghost:hover{opacity:.62;background:var(--paper)}.event.ghost .event-head strong{font-weight:600}.event.ghost .event-head strong::after{content:" · hidden type";font-weight:400;color:var(--muted)}.event-title{min-width:0}.event-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.event-toggle{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:7px;padding:4px 8px;font-size:12px;cursor:pointer}.event-toggle:hover{border-color:var(--accent);color:var(--accent)}.collapsed-note{margin-top:10px;padding:10px 12px;background:#ece9e1;border-radius:7px;color:var(--muted);font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}.event-head .badge{white-space:nowrap}@media(max-width:700px){.filter-guide{display:block}.filter-guide span{display:block;margin-top:4px}.event-head{align-items:flex-start}.event-actions{justify-content:flex-start}.event-head .badge{white-space:normal}}
+:root{
+  --bg:#0b100e;
+  --panel:#111815;
+  --panel-2:#0e1512;
+  --inset:#080c0a;
+  --line:#1f2b26;
+  --line-2:#2b3a34;
+  --ink:#d9e5e0;
+  --muted:#7f918a;
+  --faint:#5a6b64;
+  --accent:#3fd08f;
+  --accent-dim:#2a8f64;
+  --c-message:#3fd08f;
+  --c-instruction:#e0705a;
+  --c-tool:#a78bfa;
+  --c-reasoning:#e3b341;
+  --c-context:#5ea3d8;
+  --c-error:#f2718a;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+
+/* ---------- chrome ---------- */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;gap:14px;
+  padding:12px max(20px,calc((100vw - 1120px)/2));
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;letter-spacing:.01em}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px #3fd08f88}
+.brand .path{color:var(--faint);font-weight:400}
+.topbar .spacer{flex:1}
+.tabs{display:none;gap:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:3px}
+.tabs.visible{display:flex}
+.tabs button{
+  border:0;background:transparent;color:var(--muted);border-radius:6px;
+  padding:5px 12px;font-size:13px;cursor:pointer;white-space:nowrap;
+}
+.tabs button.active{background:var(--line-2);color:var(--ink)}
+#reset-btn{display:none;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
+#reset-btn.visible{display:inline-block}
+#reset-btn:hover{color:var(--ink);border-color:var(--line-2)}
+
+.shell{max-width:1120px;margin:0 auto;padding:0 20px 110px}
+
+/* ---------- landing ---------- */
+.hero-intro{padding:72px 0 40px;max-width:720px}
+.hero-intro h1{
+  margin:0 0 14px;font-size:40px;line-height:1.12;font-weight:700;letter-spacing:-.02em;
+}
+.hero-intro h1 em{font-style:normal;color:var(--accent)}
+.hero-intro p{margin:0;color:var(--muted);font-size:17px;max-width:600px}
+.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:36px 0 18px}
+.source{
+  min-width:0;text-align:left;cursor:pointer;position:relative;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:20px 20px 16px;transition:border-color .15s;
+  display:flex;flex-direction:column;gap:8px;
+}
+.source:hover{border-color:var(--line-2)}
+.source.active{border-color:var(--accent-dim);box-shadow:0 0 0 1px var(--accent-dim)}
+.source .check{
+  position:absolute;top:14px;right:14px;width:16px;height:16px;border-radius:50%;
+  border:1.5px solid var(--line-2);
+}
+.source.active .check{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 3px var(--panel)}
+.source strong{font-size:16px}
+.source .hint{color:var(--muted);font-size:12.5px;overflow-wrap:anywhere;line-height:1.5}
+.source .sample-btn{
+  align-self:flex-start;margin-top:8px;
+  border:1px solid var(--line-2);background:transparent;color:var(--accent);
+  border-radius:7px;padding:5px 11px;font-size:12.5px;cursor:pointer;
+}
+.source .sample-btn:hover{border-color:var(--accent-dim);background:#3fd08f14}
+.import-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.primary{
+  border:0;background:var(--accent);color:#06110c;border-radius:9px;
+  padding:11px 20px;font-weight:700;cursor:pointer;font-size:14.5px;
+}
+.primary:hover{filter:brightness(1.08)}
+.import-row .format-hint{color:var(--muted);font-size:13px}
+.privacy{
+  display:flex;gap:11px;align-items:flex-start;color:var(--muted);
+  margin-top:30px;font-size:13px;max-width:640px;line-height:1.55;
+  border-top:1px solid var(--line);padding-top:20px;
+}
+.privacy svg{flex:none;margin-top:2px;color:var(--accent-dim)}
+.error{display:none;background:#f2718a14;color:#f0a2b2;border:1px solid #f2718a44;padding:12px 14px;border-radius:9px;margin-top:18px;font-size:14px}
+.footer-note{margin-top:44px;color:var(--faint);font-size:12.5px}
+.footer-note a{color:var(--muted)}
+
+/* ---------- loaded ---------- */
+#loaded{padding-top:28px}
+.caution{
+  background:#e3b3410f;border:1px solid #e3b34133;color:#d8c48a;
+  padding:10px 16px;border-radius:9px;margin:0 0 22px;font-size:13.5px;
+}
+.loaded-head{margin-bottom:22px}
+.loaded-head h2{margin:0 0 4px;font-size:22px;letter-spacing:-.01em}
+.loaded-head .sub{color:var(--muted);font-size:13.5px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+.panel h2,.panel h3{margin:0 0 10px;letter-spacing:-.01em}
+.muted{color:var(--muted)}
+.hero{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px}
+.stat{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.stat strong{display:block;font-size:20px;color:var(--accent)}
+.stat span{font-size:12px;color:var(--muted)}
+.stat code{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+
+/* filters */
+.filter-guide{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-top:22px}
+.filter-guide strong{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.filter-guide span{font-size:12.5px;color:var(--faint)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 18px}
+.filters button{
+  border:1px solid var(--line);background:transparent;color:var(--muted);
+  padding:6px 13px;border-radius:999px;cursor:pointer;font-size:13px;
+  display:inline-flex;align-items:center;gap:7px;
+}
+.filters button .swatch{width:8px;height:8px;border-radius:50%;background:var(--line-2)}
+.filters button.active{background:var(--panel);color:var(--ink);border-color:var(--line-2)}
+.filters button.active .swatch{background:var(--sw,var(--accent))}
+
+/* timeline */
+.timeline{display:flex;flex-direction:column;gap:8px}
+.event{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px 12px 14px;border-left:3px solid var(--line-2);
+}
+.event.message{border-left-color:var(--c-message)}
+.event.instruction{border-left-color:var(--c-instruction)}
+.event.tool_call,.event.tool_result{border-left-color:var(--c-tool)}
+.event.reasoning{border-left-color:var(--c-reasoning)}
+.event.context,.event.state,.event.metadata,.event.unknown{border-left-color:var(--c-context)}
+.event-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.event-title{min-width:0}
+.event-title strong{font-size:14.5px}
+.badge{
+  font-size:11px;letter-spacing:.06em;color:var(--faint);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;margin-top:2px;
+}
+.event.message .badge b{color:var(--c-message)}
+.event.instruction .badge b{color:var(--c-instruction)}
+.event.tool_call .badge b,.event.tool_result .badge b{color:var(--c-tool)}
+.event.reasoning .badge b{color:var(--c-reasoning)}
+.event.context .badge b,.event.state .badge b,.event.metadata .badge b,.event.unknown .badge b{color:var(--c-context)}
+.badge b{font-weight:600}
+.event-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.event-toggle{
+  border:1px solid var(--line);background:transparent;color:var(--faint);
+  border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer;
+}
+.event-toggle:hover{border-color:var(--accent-dim);color:var(--accent)}
+.event .role-line{color:var(--faint);font-size:12.5px;margin-top:6px}
+pre{
+  white-space:pre-wrap;word-break:break-word;background:var(--inset);color:#c4d8cf;
+  border:1px solid var(--line);padding:12px 14px;border-radius:8px;
+  max-height:560px;overflow:auto;margin:10px 0 0;font-size:12.5px;line-height:1.55;
+}
+details summary{cursor:pointer;color:var(--faint);padding-top:8px;font-size:13px}
+details summary:hover{color:var(--muted)}
+.collapsed-note{
+  margin-top:10px;padding:8px 12px;background:var(--panel-2);border:1px dashed var(--line);
+  border-radius:7px;color:var(--faint);font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.event.ghost{
+  min-height:38px;padding:7px 14px;opacity:.35;background:transparent;
+  border-style:dashed;cursor:pointer;
+}
+.event.ghost:hover{opacity:.6;background:var(--panel)}
+.event.ghost .event-title strong{font-weight:500}
+.event.ghost .event-title strong::after{content:" · hidden";font-weight:400;color:var(--faint)}
+
+/* matrix + schema */
+.matrix{width:100%;border-collapse:collapse;font-size:14px}
+.matrix th{
+  text-align:left;padding:9px 11px;color:var(--faint);font-size:11.5px;
+  text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line-2);
+}
+.matrix td{text-align:left;padding:11px;border-bottom:1px solid var(--line);vertical-align:top}
+.matrix tr:last-child td{border-bottom:0}
+.status{font-weight:700;font-size:13px;white-space:nowrap}
+.status.captured{color:var(--accent)}
+.status.partial{color:var(--c-reasoning)}
+.status.not-observed{color:var(--c-error)}
+.schema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+
+/* switcher */
+.switcher{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;
+  background:var(--panel);border:1px solid var(--line-2);color:var(--ink);
+  border-radius:999px;padding:6px;display:none;gap:8px;align-items:center;
+  box-shadow:0 10px 34px #000a;
+}
+.switcher.visible{display:flex}
+.switcher button{
+  border:0;border-radius:999px;background:var(--line);color:var(--ink);
+  width:32px;height:32px;cursor:pointer;
+}
+.switcher button:hover{background:var(--line-2)}
+.switcher span{min-width:168px;text-align:center;font-weight:600;font-size:13.5px}
+
+@media(max-width:760px){
+  .source-grid,.hero{grid-template-columns:1fr}
+  .hero-intro{padding:44px 0 28px}
+  .hero-intro h1{font-size:30px}
+  .filter-guide{display:block}
+  .filter-guide span{display:block;margin-top:4px}
+  .event-head{flex-direction:column;align-items:flex-start;gap:6px}
+  .event-actions{justify-content:flex-start}
+  .badge{white-space:normal}
+  .matrix{font-size:13px}
+  .tabs{display:none !important}
+}
 </style>
 </head>
 <body>
-<header><h1>Coding-agent transcript viewer</h1><p>Open a Codex, Claude Code, or Antigravity trace locally and inspect the instructions, messages, reasoning records, tool calls, results, context, and captured state.</p></header>
+<div class="topbar">
+  <div class="brand mono"><span class="dot"></span>agent-trace-viewer<span class="path" id="brand-path"></span></div>
+  <div class="spacer"></div>
+  <div class="tabs" id="tabs"></div>
+  <button id="reset-btn">New trace</button>
+</div>
+
 <main class="shell">
-  <section id="empty" class="empty panel">
-    <h2>Import a trace</h2>
-    <p class="muted">First choose the agent that wrote the file. The formats are different enough that this choice determines how the records are interpreted.</p>
-    <div class="source-grid" role="radiogroup" aria-label="Trace source">
-      <button class="source active" data-source="codex" role="radio" aria-checked="true"><strong>Codex</strong><span>JSONL from ~/.codex/sessions or archived_sessions</span></button>
-      <button class="source" data-source="claude" role="radio" aria-checked="false"><strong>Claude Code</strong><span>JSONL from ~/.claude/projects</span></button>
-      <button class="source" data-source="agy" role="radio" aria-checked="false"><strong>Antigravity (agy)</strong><span>brain/&lt;conversation&gt;/.system_generated/logs/transcript_full.jsonl</span></button>
+  <section id="empty">
+    <div class="hero-intro">
+      <h1>See what your coding agent <em>actually did</em>.</h1>
+      <p>Open a local session trace from Codex, Claude Code, or Antigravity and inspect the full trajectory — instructions, messages, reasoning, tool calls, results, and captured state.</p>
     </div>
-    <div class="import-row"><button id="import" class="primary">Import a Codex trace</button><span id="format-hint" class="muted">Choose a .jsonl or .json file</span></div>
+
+    <div class="source-grid" role="radiogroup" aria-label="Trace source">
+      <div class="source active" data-source="codex" role="radio" aria-checked="true" tabindex="0">
+        <span class="check"></span>
+        <strong>Codex</strong>
+        <span class="hint mono">~/.codex/sessions/*.jsonl</span>
+        <span class="hint">Typed rollout records with encrypted reasoning payloads and readable summaries.</span>
+        <button class="sample-btn" data-sample="codex">▸ Try a sample trace</button>
+      </div>
+      <div class="source" data-source="claude" role="radio" aria-checked="false" tabindex="0">
+        <span class="check"></span>
+        <strong>Claude Code</strong>
+        <span class="hint mono">~/.claude/projects/&lt;project&gt;/*.jsonl</span>
+        <span class="hint">UUID-linked messages with plaintext thinking blocks and file-history snapshots.</span>
+        <button class="sample-btn" data-sample="claude">▸ Try a sample trace</button>
+      </div>
+      <div class="source" data-source="agy" role="radio" aria-checked="false" tabindex="0">
+        <span class="check"></span>
+        <strong>Antigravity</strong>
+        <span class="hint mono">brain/&lt;conv&gt;/.system_generated/logs/transcript_full.jsonl</span>
+        <span class="hint">Planner step records with thinking, tool calls, and sequential results.</span>
+        <button class="sample-btn" data-sample="agy">▸ Try a sample trace</button>
+      </div>
+    </div>
+
+    <div class="import-row">
+      <button id="import" class="primary">Import a Codex trace</button>
+      <span id="format-hint" class="format-hint">Choose a .jsonl or .json file</span>
+    </div>
     <input id="file" type="file" accept=".jsonl,.json,application/json" hidden>
-    <div class="privacy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>The file is read by this page in your browser. Nothing is uploaded, stored, or added to the HTML. Reloading clears it. Full instruction and tool-output bodies are shown, so inspect the trace before sharing screenshots or copied content.</span></div>
+
+    <div class="privacy">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <span><strong style="color:var(--ink)">Nothing leaves your browser.</strong> The file is read locally by this page — it is never uploaded or stored, and this page makes no network requests at all. Reloading discards the trace. Full instruction and tool-output bodies are shown, so review before sharing screenshots.</span>
+    </div>
+
     <div id="error" class="error" role="alert"></div>
+
+    <div class="footer-note">Open source · <a href="https://github.com/zenml-io/agent-trace-viewer">zenml-io/agent-trace-viewer</a> · built by the <a href="https://zenml.io">ZenML</a> team</div>
   </section>
+
   <section id="loaded" hidden>
-    <div class="warning"><strong>This trace may contain secrets or private data.</strong> Unlike the earlier generated report, this viewer deliberately shows complete instruction bodies and tool output. The selected file remains only in this browser tab.</div>
-    <div class="loaded-head"><div><h2 id="loaded-title"></h2><div id="loaded-subtitle" class="muted"></div></div><button id="another" class="secondary">Import another trace</button></div>
+    <div class="caution"><strong>Traces can contain secrets and private data.</strong> This viewer deliberately shows complete instruction bodies and tool output. The file stays in this browser tab.</div>
+    <div class="loaded-head">
+      <h2 id="loaded-title"></h2>
+      <div id="loaded-subtitle" class="sub muted"></div>
+    </div>
     <div id="app"></div>
   </section>
 </main>
-<div id="switcher" class="switcher"><button id="prev" aria-label="Previous view">←</button><span id="variant-label"></span><button id="next" aria-label="Next view">→</button></div>
+
+<div id="switcher" class="switcher">
+  <button id="prev" aria-label="Previous view">←</button>
+  <span id="variant-label"></span>
+  <button id="next" aria-label="Next view">→</button>
+</div>
+
 <script>
 'use strict';
 let selectedSource='codex';let session=null;let selectedKinds=null;const collapsedEvents=new Set();
 const variants=[['timeline','Timeline'],['anatomy','Replay evidence'],['schema','Raw schema']];
 const sourceNames={codex:'Codex',claude:'Claude Code',agy:'Antigravity'};
 const sourceHints={codex:'Choose a .jsonl or .json file',claude:'Choose a .jsonl file',agy:'Choose transcript_full.jsonl for untruncated tool output'};
+const kindColors={message:'var(--c-message)',instruction:'var(--c-instruction)',tool_call:'var(--c-tool)',tool_result:'var(--c-tool)',reasoning:'var(--c-reasoning)',context:'var(--c-context)',state:'var(--c-context)',metadata:'var(--c-context)',unknown:'var(--c-context)'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pretty=v=>typeof v==='string'?v:JSON.stringify(v,null,2);
 const types=v=>typeof v==='string'?['text']:Array.isArray(v)?v.filter(x=>x&&typeof x==='object').map(x=>x.type||'unknown'):[typeof v];
@@ -87,28 +360,34 @@ function parseAgy(rows,file){
   return finish('Antigravity',file,events,{format:isFull?'Antigravity transcript_full.jsonl':'Antigravity transcript.jsonl',record_count:rows.length,user_inputs:userInputs,checkpoints,parser_status:'grounded in Antigravity CLI 1.1.15'},topSchema(rows,r=>`${r?.source||'-'}:${r?.status||'-'}`),tools,matrix);
 }
 function finish(source,file,events,metadata,schema,tools,matrix){return{source,file:file.name,size:file.size,events,metadata,schema,tools,matrix,counts:count(events,'kind')}}
-function hero(s){return`<div class="hero"><div class="panel"><h2>${esc(s.source)}</h2><div class="muted">${esc(s.file)} · ${(s.size/1024).toFixed(1)} KB</div><p>This file produced ${s.events.length} normalized events. It is evidence about this exact file and client version, not a permanent format contract.</p></div><div class="panel"><h3>Captured events</h3><div class="stats">${Object.entries(s.counts).map(([k,v])=>`<div class="stat"><strong>${v}</strong>${esc(k.replaceAll('_',' '))}</div>`).join('')}</div></div></div>`}
+
+/* ---------- rendering ---------- */
+function hero(s){return`<div class="hero"><div class="panel"><h2>${esc(s.source)}</h2><div class="muted mono" style="font-size:12.5px">${esc(s.file)} · ${(s.size/1024).toFixed(1)} KB</div><p style="margin:10px 0 0">This file produced <strong style="color:var(--accent)">${s.events.length}</strong> normalized events. It is evidence about this exact file and client version, not a permanent format contract.</p></div><div class="panel"><h3>Captured events</h3><div class="stats">${Object.entries(s.counts).map(([k,v])=>`<div class="stat"><strong>${v}</strong><span>${esc(k.replaceAll('_',' '))}</span></div>`).join('')}</div></div></div>`}
 function timeline(s){
   const kinds=[...new Set(s.events.map(e=>e.kind))];
   if(selectedKinds===null)selectedKinds=new Set(kinds);
   const allSelected=kinds.every(kind=>selectedKinds.has(kind));
-  const filters=`<div class="filter-guide"><strong>Event types</strong><span>Select any combination. Deselected events remain as ghost rows so the trajectory keeps its shape.</span></div><div class="filters"><button class="${allSelected?'active':''}" data-kind="all">show all</button>${kinds.map(kind=>`<button class="${selectedKinds.has(kind)?'active':''}" data-kind="${kind}" aria-pressed="${selectedKinds.has(kind)}">${esc(kind.replaceAll('_',' '))}</button>`).join('')}</div>`;
+  const filters=`<div class="filter-guide"><strong>Event types</strong><span>Deselected events remain as ghost rows so the trajectory keeps its shape.</span></div><div class="filters"><button class="${allSelected?'active':''}" data-kind="all">show all</button>${kinds.map(kind=>`<button class="${selectedKinds.has(kind)?'active':''}" data-kind="${kind}" aria-pressed="${selectedKinds.has(kind)}" style="--sw:${kindColors[kind]||'var(--accent)'}"><span class="swatch"></span>${esc(kind.replaceAll('_',' '))}</button>`).join('')}</div>`;
   const events=s.events.map((e,eventIndex)=>{
     const ghost=!selectedKinds.has(e.kind),collapsed=collapsedEvents.has(eventIndex),hasContents=e.text!==undefined||e.data!==undefined;
     const contentLength=(e.text===undefined?0:String(e.text).length)+(e.data===undefined?0:pretty(e.data).length);
-    const actions=!ghost&&hasContents?`<button class="event-toggle" data-event-index="${eventIndex}">${collapsed?'Reveal contents':'Hide contents'}</button>`:'';
-    const body=ghost?'':collapsed?`<div class="collapsed-note">Contents hidden · ${contentLength.toLocaleString()} characters</div>`:`${e.role?`<div class="muted">role: ${esc(e.role)}</div>`:''}${e.text!==undefined?`<pre>${esc(e.text)}</pre>`:''}${e.data!==undefined?`<details><summary>Show structured payload</summary><pre>${esc(pretty(e.data))}</pre></details>`:''}`;
-    return `<article class="event ${e.kind}${ghost?' ghost':''}" data-kind="${e.kind}" data-event-index="${eventIndex}"><div class="event-head"><div class="event-title"><strong>${esc(e.title)}</strong><div class="badge">${esc(e.kind)} · row ${e.index}${e.timestamp?' · '+esc(e.timestamp):''}</div></div><div class="event-actions">${actions}</div></div>${body}</article>`;
+    const actions=!ghost&&hasContents?`<button class="event-toggle" data-event-index="${eventIndex}">${collapsed?'Reveal':'Hide'}</button>`:'';
+    const body=ghost?'':collapsed?`<div class="collapsed-note">Contents hidden · ${contentLength.toLocaleString()} characters</div>`:`${e.role?`<div class="role-line mono">role: ${esc(e.role)}</div>`:''}${e.text!==undefined?`<pre>${esc(e.text)}</pre>`:''}${e.data!==undefined?`<details><summary>Show structured payload</summary><pre>${esc(pretty(e.data))}</pre></details>`:''}`;
+    return `<article class="event ${e.kind}${ghost?' ghost':''}" data-kind="${e.kind}" data-event-index="${eventIndex}"><div class="event-head"><div class="event-title"><strong>${esc(e.title)}</strong><div class="badge"><b>${esc(e.kind)}</b> · row ${e.index}${e.timestamp?' · '+esc(e.timestamp):''}</div></div><div class="event-actions">${actions}</div></div>${body}</article>`;
   }).join('');
   return hero(s)+filters+`<div class="timeline">${events}</div>`;
 }
-function anatomy(s){return hero(s)+`<div class="panel"><h2>What this file can support</h2><table class="matrix"><thead><tr><th>Replay input</th><th>Verdict</th><th>Observed evidence</th></tr></thead><tbody>${Object.entries(s.matrix).map(([name,v])=>`<tr><td><strong>${esc(name)}</strong></td><td class="status ${esc(v.status.replaceAll(' ','-'))}">${esc(v.status)}</td><td>${esc(v.evidence)}</td></tr>`).join('')}</tbody></table></div><div class="hero" style="margin-top:16px"><div class="panel"><h3>Tool names</h3><pre>${esc(pretty(s.tools))}</pre></div><div class="panel"><h3>Run metadata</h3><pre>${esc(pretty(s.metadata))}</pre></div></div>`}
-function schema(s){return hero(s)+`<div class="panel"><h2>Record shapes observed</h2><div class="schema-grid">${Object.entries(s.schema).map(([k,v])=>`<div class="stat"><strong>${v}</strong><code>${esc(k)}</code></div>`).join('')}</div></div><div class="panel" style="margin-top:16px"><h2>Normalized event JSON</h2><pre>${esc(pretty(s.events))}</pre></div>`}
+function anatomy(s){return hero(s)+`<div class="panel"><h2>What this file can support</h2><table class="matrix"><thead><tr><th>Replay input</th><th>Verdict</th><th>Observed evidence</th></tr></thead><tbody>${Object.entries(s.matrix).map(([name,v])=>`<tr><td><strong>${esc(name)}</strong></td><td class="status ${esc(v.status.replaceAll(' ','-'))}">${esc(v.status)}</td><td class="muted">${esc(v.evidence)}</td></tr>`).join('')}</tbody></table></div><div class="hero" style="margin-top:14px"><div class="panel"><h3>Tool names</h3><pre>${esc(pretty(s.tools))}</pre></div><div class="panel"><h3>Run metadata</h3><pre>${esc(pretty(s.metadata))}</pre></div></div>`}
+function schema(s){return hero(s)+`<div class="panel"><h2>Record shapes observed</h2><div class="schema-grid">${Object.entries(s.schema).map(([k,v])=>`<div class="stat"><strong>${v}</strong><code>${esc(k)}</code></div>`).join('')}</div></div><div class="panel" style="margin-top:14px"><h2>Normalized event JSON</h2><pre>${esc(pretty(s.events))}</pre></div>`}
+function currentVariant(){const q=new URLSearchParams(location.search);return variants.some(v=>v[0]===q.get('variant'))?q.get('variant'):'timeline'}
 function render(){
   if(!session)return;
-  const q=new URLSearchParams(location.search),variant=variants.some(v=>v[0]===q.get('variant'))?q.get('variant'):'timeline';
+  const variant=currentVariant();
   document.getElementById('app').innerHTML=variant==='timeline'?timeline(session):variant==='anatomy'?anatomy(session):schema(session);
   document.getElementById('variant-label').textContent=variants.find(v=>v[0]===variant)[1];
+  const tabs=document.getElementById('tabs');
+  tabs.innerHTML=variants.map(([id,label])=>`<button data-variant="${id}" class="${id===variant?'active':''}">${label}</button>`).join('');
+  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{const q=new URLSearchParams(location.search);q.set('variant',b.dataset.variant);history.replaceState(null,'','?'+q);render()});
   if(variant!=='timeline')return;
   const kinds=[...new Set(session.events.map(e=>e.kind))];
   document.querySelectorAll('.filters button').forEach(button=>button.onclick=()=>{const kind=button.dataset.kind;if(kind==='all')selectedKinds=new Set(kinds);else if(selectedKinds.has(kind))selectedKinds.delete(kind);else selectedKinds.add(kind);render()});
@@ -116,11 +395,96 @@ function render(){
   document.querySelectorAll('.event.ghost').forEach(card=>card.onclick=()=>{selectedKinds.add(card.dataset.kind);render()});
 }
 function cycle(delta){if(!session)return;const q=new URLSearchParams(location.search),current=variants.findIndex(v=>v[0]===(q.get('variant')||'timeline'));q.set('variant',variants[(current+delta+variants.length)%variants.length][0]);history.replaceState(null,'','?'+q);render()}
-function reset(){session=null;selectedKinds=null;collapsedEvents.clear();document.getElementById('loaded').hidden=true;document.getElementById('empty').hidden=false;document.getElementById('switcher').classList.remove('visible');document.getElementById('file').value='';document.getElementById('error').style.display='none'}
-document.querySelectorAll('.source').forEach(button=>button.onclick=()=>{selectedSource=button.dataset.source;document.querySelectorAll('.source').forEach(x=>{const active=x===button;x.classList.toggle('active',active);x.setAttribute('aria-checked',String(active))});document.getElementById('import').textContent=`Import a ${sourceNames[selectedSource]} trace`;document.getElementById('format-hint').textContent=sourceHints[selectedSource]});
+function showLoaded(newSession,subtitle){
+  session=newSession;selectedKinds=null;collapsedEvents.clear();
+  document.getElementById('empty').hidden=true;
+  document.getElementById('loaded').hidden=false;
+  document.getElementById('loaded-title').textContent=`${session.source} · ${session.file}`;
+  document.getElementById('loaded-subtitle').textContent=subtitle;
+  document.getElementById('switcher').classList.add('visible');
+  document.getElementById('tabs').classList.add('visible');
+  document.getElementById('reset-btn').classList.add('visible');
+  document.getElementById('brand-path').textContent=' / '+session.source.toLowerCase().replace(' ','-');
+  window.scrollTo(0,0);
+  render();
+}
+function reset(){
+  session=null;selectedKinds=null;collapsedEvents.clear();
+  document.getElementById('loaded').hidden=true;
+  document.getElementById('empty').hidden=false;
+  document.getElementById('switcher').classList.remove('visible');
+  document.getElementById('tabs').classList.remove('visible');
+  document.getElementById('reset-btn').classList.remove('visible');
+  document.getElementById('brand-path').textContent='';
+  document.getElementById('file').value='';
+  document.getElementById('error').style.display='none';
+  history.replaceState(null,'',location.pathname);
+}
+document.querySelectorAll('.source').forEach(card=>{
+  const select=()=>{selectedSource=card.dataset.source;document.querySelectorAll('.source').forEach(x=>{const active=x===card;x.classList.toggle('active',active);x.setAttribute('aria-checked',String(active))});document.getElementById('import').textContent=`Import a ${sourceNames[selectedSource]} trace`;document.getElementById('format-hint').textContent=sourceHints[selectedSource]};
+  card.onclick=event=>{if(!event.target.classList.contains('sample-btn'))select()};
+  card.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();select()}};
+});
 document.getElementById('import').onclick=()=>document.getElementById('file').click();
-document.getElementById('file').onchange=async event=>{const file=event.target.files[0];if(!file)return;const error=document.getElementById('error');try{const text=await file.text(),data=parseInput(text,selectedSource);session=selectedSource==='codex'?parseCodex(data,file):selectedSource==='claude'?parseClaude(data,file):parseAgy(data,file);selectedKinds=null;collapsedEvents.clear();document.getElementById('empty').hidden=true;document.getElementById('loaded').hidden=false;document.getElementById('loaded-title').textContent=`${session.source} · ${file.name}`;document.getElementById('loaded-subtitle').textContent='Loaded locally. Reload this page to discard the trace.';document.getElementById('switcher').classList.add('visible');render()}catch(e){error.textContent=e instanceof Error?e.message:String(e);error.style.display='block';event.target.value=''}};
-document.getElementById('another').onclick=reset;document.getElementById('prev').onclick=()=>cycle(-1);document.getElementById('next').onclick=()=>cycle(1);addEventListener('keydown',event=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable)return;if(event.key==='ArrowLeft')cycle(-1);if(event.key==='ArrowRight')cycle(1)});
+document.getElementById('file').onchange=async event=>{const file=event.target.files[0];if(!file)return;const error=document.getElementById('error');try{const text=await file.text(),data=parseInput(text,selectedSource);const parsed=selectedSource==='codex'?parseCodex(data,file):selectedSource==='claude'?parseClaude(data,file):parseAgy(data,file);showLoaded(parsed,'Loaded locally. Reload this page to discard the trace.')}catch(e){error.textContent=e instanceof Error?e.message:String(e);error.style.display='block';event.target.value=''}};
+document.getElementById('reset-btn').onclick=reset;
+document.getElementById('prev').onclick=()=>cycle(-1);
+document.getElementById('next').onclick=()=>cycle(1);
+addEventListener('keydown',event=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable)return;if(event.key==='ArrowLeft')cycle(-1);if(event.key==='ArrowRight')cycle(1)});
+
+/* ---------- synthetic sample traces ---------- */
+/* Fictional but format-faithful: a small "fix the month-rollover bug" task in each format. */
+const SAMPLES={};
+SAMPLES.codex={file:{name:'rollout-2026-08-19T09-14-02-sample.jsonl',size:0},rows:[
+ {timestamp:'2026-08-19T09:14:02.113Z',type:'session_meta',payload:{id:'0198f3c2-6d41-7a52-b7c0-sample000001',timestamp:'2026-08-19T09:14:02.113Z',cwd:'/home/dev/timeutils',originator:'codex_cli_rs',cli_version:'0.21.0',model:'gpt-5-codex',base_instructions:'You are Codex, a coding agent running in the Codex CLI. You are expected to be precise, safe, and helpful.\n\n# How you work\n- Prefer running commands over guessing.\n- Keep patches minimal and focused on the task.\n- Use apply_patch for all file edits.\n\n(Sample trace: this base-instruction body is fictional and abbreviated.)'}},
+ {timestamp:'2026-08-19T09:14:02.201Z',type:'turn_context',payload:{cwd:'/home/dev/timeutils',approval_policy:'on-request',sandbox_policy:{mode:'workspace-write',network_access:false},model:'gpt-5-codex',effort:'medium',summary:'auto'}},
+ {timestamp:'2026-08-19T09:14:05.480Z',type:'response_item',payload:{type:'message',role:'user',content:[{type:'input_text',text:'end_of_month() returns the 1st of the same month when given the last day of a month, e.g. 2026-01-31 -> 2026-01-01. Can you fix it and make sure the tests pass?'}]}},
+ {timestamp:'2026-08-19T09:14:09.822Z',type:'response_item',payload:{type:'reasoning',summary:[{type:'summary_text',text:'**Locating the formatter**\n\nI should find where end_of_month is defined, reproduce the failure with the existing tests, then inspect the arithmetic around month boundaries.'}],encrypted_content:'gAAAAABoSAMPLEencryptedpayloadnotreadablefromthisfile=='}},
+ {timestamp:'2026-08-19T09:14:10.031Z',type:'event_msg',payload:{type:'agent_reasoning',text:'I should find where end_of_month is defined, reproduce the failure with the existing tests, then inspect the arithmetic around month boundaries.'}},
+ {timestamp:'2026-08-19T09:14:10.518Z',type:'response_item',payload:{type:'function_call',name:'shell',call_id:'call_sample_01',arguments:'{"command":["bash","-lc","grep -rn \\"def end_of_month\\" src/ && python -m pytest tests/test_boundaries.py -x -q"]}'}},
+ {timestamp:'2026-08-19T09:14:12.874Z',type:'response_item',payload:{type:'function_call_output',call_id:'call_sample_01',output:'{"output":"src/timeutils/boundaries.py:41:def end_of_month(d: date) -> date:\\n\\nF\\n=== FAILURES ===\\ntest_last_day_of_january\\nassert date(2026, 1, 31) == date(2026, 1, 1)\\n1 failed, 11 passed in 0.31s","metadata":{"exit_code":1,"duration_seconds":2.1}}'}},
+ {timestamp:'2026-08-19T09:14:15.204Z',type:'response_item',payload:{type:'function_call',name:'shell',call_id:'call_sample_02',arguments:'{"command":["bash","-lc","sed -n \'38,52p\' src/timeutils/boundaries.py"]}'}},
+ {timestamp:'2026-08-19T09:14:15.960Z',type:'response_item',payload:{type:'function_call_output',call_id:'call_sample_02',output:'{"output":"def end_of_month(d: date) -> date:\\n    \\"\\"\\"Return the last day of d\'s month.\\"\\"\\"\\n    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\\n    return nxt - timedelta(days=1)","metadata":{"exit_code":0,"duration_seconds":0.05}}'}},
+ {timestamp:'2026-08-19T09:14:19.377Z',type:'response_item',payload:{type:'reasoning',summary:[{type:'summary_text',text:'**Found the bug**\n\nWhen d.day equals the month length, d.day % length is 0, so day becomes 1 and subtracting a day lands on the previous month… actually it lands on the last day of the previous month minus offsets — the modulo wraps exactly on the last day. The function should just return d.replace(day=monthrange(...)[1]) directly.'}],encrypted_content:'gAAAAABoSAMPLEencryptedpayload2=='}},
+ {timestamp:'2026-08-19T09:14:20.115Z',type:'response_item',payload:{type:'function_call',name:'apply_patch',call_id:'call_sample_03',arguments:'{"input":"*** Begin Patch\\n*** Update File: src/timeutils/boundaries.py\\n@@\\n def end_of_month(d: date) -> date:\\n     \\"\\"\\"Return the last day of d\'s month.\\"\\"\\"\\n-    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\\n-    return nxt - timedelta(days=1)\\n+    return d.replace(day=monthrange(d.year, d.month)[1])\\n*** End Patch"}'}},
+ {timestamp:'2026-08-19T09:14:20.702Z',type:'response_item',payload:{type:'function_call_output',call_id:'call_sample_03',output:'{"output":"Success. Updated the following files:\\nM src/timeutils/boundaries.py","metadata":{"exit_code":0,"duration_seconds":0.02}}'}},
+ {timestamp:'2026-08-19T09:14:21.330Z',type:'response_item',payload:{type:'function_call',name:'shell',call_id:'call_sample_04',arguments:'{"command":["bash","-lc","python -m pytest tests/test_boundaries.py -q"]}'}},
+ {timestamp:'2026-08-19T09:14:23.481Z',type:'response_item',payload:{type:'function_call_output',call_id:'call_sample_04',output:'{"output":"12 passed in 0.28s","metadata":{"exit_code":0,"duration_seconds":2.0}}'}},
+ {timestamp:'2026-08-19T09:14:26.910Z',type:'response_item',payload:{type:'message',role:'assistant',content:[{type:'output_text',text:'Fixed. The bug was in `end_of_month`: it computed `d.day % month_length + 1`, and on the last day of the month the modulo wraps to 0, producing day 1. I replaced the round-trip arithmetic with a direct `d.replace(day=monthrange(d.year, d.month)[1])`.\n\nAll 12 tests in `tests/test_boundaries.py` pass.'}]}}
+]};
+SAMPLES.claude={file:{name:'7d1f5a2e-sample-claude-session.jsonl',size:0},rows:[
+ {parentUuid:null,isSidechain:false,userType:'external',cwd:'/home/dev/timeutils',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',version:'2.0.44',gitBranch:'fix/month-rollover',type:'user',uuid:'u-0001',timestamp:'2026-08-19T09:14:05.480Z',message:{role:'user',content:[{type:'text',text:'end_of_month() returns the 1st of the same month when given the last day of a month, e.g. 2026-01-31 -> 2026-01-01. Can you fix it and make sure the tests pass?'}]}},
+ {parentUuid:'u-0001',isSidechain:false,cwd:'/home/dev/timeutils',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',version:'2.0.44',gitBranch:'fix/month-rollover',type:'assistant',uuid:'a-0001',timestamp:'2026-08-19T09:14:09.822Z',message:{role:'assistant',model:'claude-sonnet-4-5',content:[{type:'thinking',thinking:'The user reports an off-by-one on the month boundary. Classic modulo-wrap bug: day % month_length is 0 exactly on the last day. Let me find the function and reproduce with the test suite first.'},{type:'text',text:"I'll reproduce the failure first, then look at the boundary arithmetic."},{type:'tool_use',id:'toolu_sample_01',name:'Bash',input:{command:'grep -rn "def end_of_month" src/ && python -m pytest tests/test_boundaries.py -x -q',description:'Locate function and run boundary tests'}}]}},
+ {parentUuid:'a-0001',isSidechain:false,type:'user',uuid:'u-0002',timestamp:'2026-08-19T09:14:12.874Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'user',content:[{type:'tool_result',tool_use_id:'toolu_sample_01',content:'src/timeutils/boundaries.py:41:def end_of_month(d: date) -> date:\n\nF\n=== FAILURES ===\ntest_last_day_of_january\nassert date(2026, 1, 31) == date(2026, 1, 1)\n1 failed, 11 passed in 0.31s',is_error:true}]}},
+ {parentUuid:'u-0002',isSidechain:false,type:'assistant',uuid:'a-0002',timestamp:'2026-08-19T09:14:15.204Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'assistant',model:'claude-sonnet-4-5',content:[{type:'tool_use',id:'toolu_sample_02',name:'Read',input:{file_path:'/home/dev/timeutils/src/timeutils/boundaries.py',offset:38,limit:10}}]}},
+ {parentUuid:'a-0002',isSidechain:false,type:'user',uuid:'u-0003',timestamp:'2026-08-19T09:14:15.960Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'user',content:[{type:'tool_result',tool_use_id:'toolu_sample_02',content:'    38\t\n    39\t\n    40\t\n    41\tdef end_of_month(d: date) -> date:\n    42\t    """Return the last day of d\'s month."""\n    43\t    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\n    44\t    return nxt - timedelta(days=1)'}]}},
+ {parentUuid:'u-0003',isSidechain:false,type:'assistant',uuid:'a-0003',timestamp:'2026-08-19T09:14:19.377Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'assistant',model:'claude-sonnet-4-5',content:[{type:'thinking',thinking:'There it is: on the last day, d.day % month_length == 0, so day becomes 1 and subtracting a day gives the last day of the previous month… no — it gives day 1 minus 1 day. Either way the round-trip is wrong exactly on the boundary. The direct fix: return d.replace(day=monthrange(d.year, d.month)[1]).'},{type:'text',text:'Found it — the modulo wraps to 0 exactly on the last day of the month. Fixing with a direct replace.'},{type:'tool_use',id:'toolu_sample_03',name:'Edit',input:{file_path:'/home/dev/timeutils/src/timeutils/boundaries.py',old_string:'    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\n    return nxt - timedelta(days=1)',new_string:'    return d.replace(day=monthrange(d.year, d.month)[1])'}}]}},
+ {parentUuid:'a-0003',isSidechain:false,type:'user',uuid:'u-0004',timestamp:'2026-08-19T09:14:20.702Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'user',content:[{type:'tool_result',tool_use_id:'toolu_sample_03',content:'The file /home/dev/timeutils/src/timeutils/boundaries.py has been updated.'}]}},
+ {type:'file-history-snapshot',messageId:'a-0003',timestamp:'2026-08-19T09:14:20.760Z',snapshot:{trackedFileBackups:{'src/timeutils/boundaries.py':{originalContent:'def end_of_month(d: date) -> date:\n    """Return the last day of d\'s month."""\n    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\n    return nxt - timedelta(days=1)'}},timestamp:'2026-08-19T09:14:20.760Z'}},
+ {parentUuid:'u-0004',isSidechain:false,type:'assistant',uuid:'a-0004',timestamp:'2026-08-19T09:14:21.330Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'assistant',model:'claude-sonnet-4-5',content:[{type:'tool_use',id:'toolu_sample_04',name:'Bash',input:{command:'python -m pytest tests/test_boundaries.py -q',description:'Run boundary tests'}}]}},
+ {parentUuid:'a-0004',isSidechain:false,type:'user',uuid:'u-0005',timestamp:'2026-08-19T09:14:23.481Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'user',content:[{type:'tool_result',tool_use_id:'toolu_sample_04',content:'12 passed in 0.28s'}]}},
+ {parentUuid:'u-0005',isSidechain:false,type:'assistant',uuid:'a-0005',timestamp:'2026-08-19T09:14:26.910Z',sessionId:'7d1f5a2e-0000-4000-8000-sample000001',message:{role:'assistant',model:'claude-sonnet-4-5',content:[{type:'text',text:'Fixed. The bug was in `end_of_month` (src/timeutils/boundaries.py:43): it computed `d.day % month_length + 1`, and on the last day of the month the modulo wraps to 0, producing day 1. I replaced the round-trip arithmetic with a direct `d.replace(day=monthrange(d.year, d.month)[1])`.\n\nAll 12 tests in `tests/test_boundaries.py` pass.'}]}}
+]};
+SAMPLES.agy={file:{name:'transcript_full-sample.jsonl',size:0},rows:[
+ {step_index:0,type:'USER_INPUT',source:'USER',status:'DONE',created_at:'2026-08-19T09:14:05Z',content:'end_of_month() returns the 1st of the same month when given the last day of a month, e.g. 2026-01-31 -> 2026-01-01. Can you fix it and make sure the tests pass?\n\n<additional_metadata>workspace: /home/dev/timeutils · branch: fix/month-rollover</additional_metadata>'},
+ {step_index:1,type:'PLANNER_RESPONSE',source:'PLANNER',status:'DONE',created_at:'2026-08-19T09:14:09Z',thinking:'The user reports an off-by-one exactly on the month boundary. That smells like modulo arithmetic wrapping to zero on the last day. Plan: locate the function, reproduce with the tests, inspect, patch, re-run.',tool_calls:[{name:'run_command',args:{command:'grep -rn "def end_of_month" src/ && python -m pytest tests/test_boundaries.py -x -q',cwd:'/home/dev/timeutils'}}]},
+ {step_index:2,type:'GENERIC',source:'TOOL',status:'DONE',created_at:'2026-08-19T09:14:12Z',content:'src/timeutils/boundaries.py:41:def end_of_month(d: date) -> date:\n\nF\n=== FAILURES ===\ntest_last_day_of_january\nassert date(2026, 1, 31) == date(2026, 1, 1)\n1 failed, 11 passed in 0.31s\n[exit code 1]'},
+ {step_index:3,type:'PLANNER_RESPONSE',source:'PLANNER',status:'DONE',created_at:'2026-08-19T09:14:15Z',tool_calls:[{name:'view_file',args:{path:'src/timeutils/boundaries.py',start_line:38,end_line:48}}]},
+ {step_index:4,type:'GENERIC',source:'TOOL',status:'DONE',created_at:'2026-08-19T09:14:16Z',content:'def end_of_month(d: date) -> date:\n    """Return the last day of d\'s month."""\n    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\n    return nxt - timedelta(days=1)'},
+ {step_index:5,type:'PLANNER_RESPONSE',source:'PLANNER',status:'DONE',created_at:'2026-08-19T09:14:19Z',thinking:'Confirmed: d.day % month_length is 0 exactly on the last day, so the round-trip lands on day 1. Replace with a direct d.replace(day=month_length).',tool_calls:[{name:'edit_file',args:{path:'src/timeutils/boundaries.py',old:'    nxt = d.replace(day=d.day % monthrange(d.year, d.month)[1] + 1)\n    return nxt - timedelta(days=1)',new:'    return d.replace(day=monthrange(d.year, d.month)[1])'}}]},
+ {step_index:6,type:'GENERIC',source:'TOOL',status:'DONE',created_at:'2026-08-19T09:14:20Z',content:'Edited src/timeutils/boundaries.py (1 replacement).'},
+ {step_index:7,type:'CHECKPOINT',source:'SYSTEM',status:'DONE',created_at:'2026-08-19T09:14:20Z',content:'Checkpoint recorded after file edit: src/timeutils/boundaries.py'},
+ {step_index:8,type:'PLANNER_RESPONSE',source:'PLANNER',status:'DONE',created_at:'2026-08-19T09:14:21Z',tool_calls:[{name:'run_command',args:{command:'python -m pytest tests/test_boundaries.py -q',cwd:'/home/dev/timeutils'}}]},
+ {step_index:9,type:'GENERIC',source:'TOOL',status:'DONE',created_at:'2026-08-19T09:14:23Z',content:'12 passed in 0.28s\n[exit code 0]'},
+ {step_index:10,type:'PLANNER_RESPONSE',source:'PLANNER',status:'DONE',created_at:'2026-08-19T09:14:26Z',content:'Fixed. The bug was in end_of_month: it computed d.day % month_length + 1, and on the last day of the month the modulo wraps to 0, producing day 1. I replaced the round-trip arithmetic with a direct d.replace(day=monthrange(d.year, d.month)[1]). All 12 tests pass.'}
+]};
+Object.values(SAMPLES).forEach(sample=>{sample.file.size=JSON.stringify(sample.rows).length});
+document.querySelectorAll('.sample-btn').forEach(button=>button.onclick=event=>{
+  event.stopPropagation();
+  const key=button.dataset.sample,sample=SAMPLES[key];
+  const parsed=key==='codex'?parseCodex(sample.rows,sample.file):key==='claude'?parseClaude(sample.rows,sample.file):parseAgy(sample.rows,sample.file);
+  showLoaded(parsed,'Synthetic sample trace — fictional data illustrating this format. Import your own to inspect a real session.');
+});
 </script>
 </body>
 </html>

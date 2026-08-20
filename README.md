@@ -5,6 +5,12 @@ trace from **Codex**, **Claude Code**, or **Antigravity (agy)** and inspect the
 full trajectory: instructions, user/assistant messages, reasoning records, tool
 calls and results, context, and captured state.
 
+## Samples
+
+Each format card has a **Try a sample trace** button — a small synthetic (fictional
+but format-faithful) session showing a bug-fix task, embedded inline so the page
+still makes zero network requests.
+
 ## Privacy
 
 Everything runs in your browser. The selected file is read locally with the File
