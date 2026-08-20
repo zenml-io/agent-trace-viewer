@@ -32,11 +32,20 @@ copied content.
 
 ## Views
 
-Use the arrow switcher (or ←/→ keys) to cycle between three views per trace:
+Use the tabs (or ←/→ keys) to cycle between four views per trace:
 
 1. **Timeline** — the normalized event stream, filterable by event type
-2. **Insights** — session at a glance: wall clock, tool leaderboard, event mix, reasoning visibility, heaviest events
-3. **Raw schema** — record shapes observed plus the normalized event JSON
+2. **Insights** — behavior summary (turns, failed calls, edits, tests, files touched),
+   activity density strip, tool flow graph, interesting moments (first failure,
+   first edit, tests pass, retry loops, final answer), tool leaderboard, event mix
+3. **Privacy scan** — heuristic client-side scan of the trace for likely secrets:
+   API keys, tokens, JWTs, private-key blocks, credentialed URLs, secret-looking
+   env assignments, emails, home paths, private IPs — masked on screen, each
+   finding jumping to its row
+4. **Raw schema** — record shapes observed plus the normalized event JSON
+
+Elements in Insights and Privacy scan are clickable and jump to the exact
+timeline row.
 
 ## Development
 

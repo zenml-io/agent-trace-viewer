@@ -256,6 +256,57 @@ details summary:hover{color:var(--muted)}
 .heavy-row .num{margin-left:auto;color:var(--faint);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
 .schema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
 
+/* density strip */
+.density{display:flex;gap:1px;height:26px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:#0d100e;margin-top:6px}
+.density span{flex:1;min-width:2px;cursor:pointer;opacity:.85}
+.density span:hover{opacity:1;transform:scaleY(1.08)}
+.density span.fail{box-shadow:inset 0 -8px 0 var(--c-error)}
+.density-note{margin-top:8px;font-size:12px;color:var(--faint)}
+
+/* flow graph */
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.flow .node{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  border:1px solid var(--line-2);background:#0d100e;border-radius:7px;
+  padding:5px 10px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.flow .node:hover{border-color:var(--node-color,var(--accent))}
+.flow .node .pip{width:8px;height:8px;border-radius:3px;background:var(--node-color,var(--line-2));flex:none}
+.flow .node.fail{border-color:#ff6b8666;color:#ffc4cf}
+.flow .node .st{font-size:11px}
+.flow .node .st.ok{color:var(--accent)}
+.flow .node .st.err{color:var(--c-error)}
+.flow .arrow{color:var(--faint);font-size:12px;user-select:none}
+.flow .more{color:var(--faint);font-size:12px;padding:5px 4px}
+
+/* moments */
+.moments{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.moment{display:flex;gap:10px;align-items:baseline;font-size:13.5px;cursor:pointer;min-width:0;border:1px solid transparent;border-radius:7px;padding:6px 8px;margin:-2px -8px}
+.moment:hover{background:#0d100e;border-color:var(--line)}
+.moment .tag{flex:none;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--m-color,var(--accent))}
+.moment .what{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.moment .num{margin-left:auto;color:var(--faint);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+
+/* privacy scan */
+.scan-verdict{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.sev{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border-radius:999px;padding:4px 12px;border:1px solid}
+.sev.high{color:#ffc4cf;border-color:#ff6b8650;background:#ff6b8612}
+.sev.medium{color:#e7d28b;border-color:#f2c94c3d;background:#f2c94c10}
+.sev.low{color:#a9cdea;border-color:#6db7f23d;background:#6db7f210}
+.sev.clean{color:var(--accent);border-color:#42d39244;background:#42d39210}
+.find-group{margin-top:14px}
+.find-group h4{margin:0 0 8px;font-size:13.5px;display:flex;gap:8px;align-items:baseline}
+.find-group h4 .cnt{color:var(--faint);font-weight:400;font-size:12px}
+.find{display:flex;gap:10px;align-items:baseline;font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:#0d100e;margin-top:6px;min-width:0}
+.find code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;color:#c0ccc7;font-size:12px}
+.find .rows{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.find .rows button{border:1px solid var(--line-2);background:transparent;color:var(--muted);border-radius:5px;padding:1px 7px;font-size:11px;cursor:pointer;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.find .rows button:hover{color:var(--accent);border-color:var(--accent-dim)}
+
+/* jump flash */
+@keyframes flashfade{0%,55%{outline-color:var(--accent);box-shadow:0 0 0 4px #42d39222}100%{outline-color:transparent;box-shadow:none}}
+.event.flash{outline:2px solid transparent;outline-offset:2px;animation:flashfade 1.6s ease-out}
+
 /* switcher */
 .switcher{
   position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;
@@ -365,7 +416,7 @@ details summary:hover{color:var(--muted)}
 <script>
 'use strict';
 let selectedSource='codex';let session=null;let selectedKinds=null;const collapsedEvents=new Set();
-const variants=[['timeline','Timeline'],['insights','Insights'],['schema','Raw schema']];
+const variants=[['timeline','Timeline'],['insights','Insights'],['privacy','Privacy scan'],['schema','Raw schema']];
 const sourceNames={codex:'Codex',claude:'Claude Code',agy:'Antigravity'};
 const sourceHints={codex:'Choose a .jsonl or .json file',claude:'Choose a .jsonl file',agy:'Choose transcript_full.jsonl for untruncated tool output'};
 const kindColors={message:'var(--c-message)',instruction:'var(--c-instruction)',tool_call:'var(--c-tool)',tool_result:'var(--c-tool)',reasoning:'var(--c-reasoning)',context:'var(--c-context)',state:'var(--c-context)',metadata:'var(--c-context)',unknown:'var(--c-context)'};
@@ -437,44 +488,160 @@ function timeline(s){
 function fmtDur(ms){if(!Number.isFinite(ms)||ms<0)return '—';if(ms<1000)return `${ms} ms`;const s=ms/1000;if(s<90)return `${s.toFixed(1)} s`;const m=Math.floor(s/60);if(m<90)return `${m} m ${Math.round(s%60)} s`;return `${Math.floor(m/60)} h ${m%60} m`}
 function fmtChars(n){return n>=100000?`${Math.round(n/1000)}k`:n>=10000?`${(n/1000).toFixed(1)}k`:n.toLocaleString()}
 function eventSize(e){return (e.text===undefined?0:String(e.text).length)+(e.data===undefined?0:pretty(e.data).length)}
+function eventText(e){return (e.text!==undefined?String(e.text):'')+(e.data!==undefined?'\n'+pretty(e.data):'')}
+const EDIT_TOOLS=/^(apply_patch|Edit|Write|MultiEdit|NotebookEdit|edit_file|write_file|create_file|write_to_file|replace_file_content|str_replace_editor)/i;
+const TEST_RE=/\b(pytest|unittest|npm (?:run )?test|yarn test|pnpm test|go test|cargo test|jest|vitest|rspec|mvn test|tox)\b/;
+function isFailure(e){
+  if(e.kind!=='tool_result')return false;
+  if(e.error)return true;
+  const t=eventText(e);
+  if(/"exit_code"\s*:\s*[1-9]/.test(t))return true;
+  if(/\[exit code [1-9]\d*\]/.test(t))return true;
+  if(/\b[1-9]\d* failed\b/.test(t))return true;
+  return false;
+}
+function analyze(s){
+  const events=s.events;
+  const resultByCall={};
+  events.forEach(e=>{if(e.kind==='tool_result'&&e.call_id!==undefined)resultByCall[e.call_id]=e});
+  let nextResultAfter=(i)=>{for(let j=i+1;j<events.length;j++){if(events[j].kind==='tool_result')return events[j];if(events[j].kind==='tool_call')break}return null};
+  const calls=[];
+  events.forEach((e,i)=>{if(e.kind!=='tool_call')return;const result=(e.call_id!==undefined&&resultByCall[e.call_id])||nextResultAfter(i);calls.push({call:e,idx:i,result,failed:result?isFailure(result):false})});
+  const failures=events.map((e,i)=>({e,i})).filter(x=>isFailure(x.e));
+  const edits=calls.filter(c=>EDIT_TOOLS.test(c.call.title));
+  const tests=calls.filter(c=>TEST_RE.test(eventText(c.call)));
+  const files=new Set();
+  edits.forEach(c=>{
+    const d=c.call.data;
+    if(d&&typeof d==='object')for(const key of ['file_path','path','filename','file'])if(typeof d[key]==='string')files.add(d[key]);
+    for(const m of eventText(c.call).matchAll(/\*\*\* (?:Update|Add|Delete) File: ([^\s\\"']+)/g))files.add(m[1]);
+  });
+  const userMsgs=events.filter(e=>e.kind==='message'&&e.role==='user');
+  const longestOut=events.filter(e=>e.kind==='tool_result').map((e)=>({e,size:eventSize(e)})).sort((a,b)=>b.size-a.size)[0]||null;
+  return {calls,failures,edits,tests,files,userMsgs,longestOut,resultByCall};
+}
+function findMoments(s,a){
+  const moments=[];
+  const push=(tag,color,e,what)=>moments.push({tag,color,e,what});
+  if(a.failures.length)push('first failure','var(--c-error)',a.failures[0].e,a.failures[0].e.title+' — '+eventText(a.failures[0].e).slice(0,120).replace(/\s+/g,' '));
+  if(a.edits.length)push('first edit','var(--c-tool)',a.edits[0].call,a.edits[0].call.title);
+  const passingTest=a.tests.find(c=>c.result&&!c.failed&&/\b\d+ passed\b/.test(eventText(c.result)));
+  if(passingTest)push('tests pass','var(--accent)',passingTest.result,(eventText(passingTest.result).match(/\d+ passed[^"\\\n]*/)||['tests passed'])[0]);
+  for(let i=0;i<a.calls.length-2;i++){
+    if(a.calls[i].call.title===a.calls[i+1].call.title&&a.calls[i].call.title===a.calls[i+2].call.title){
+      push('repeat loop','var(--c-reasoning)',a.calls[i].call,`${a.calls[i].call.title} called 3+ times in a row`);break;
+    }
+  }
+  if(a.longestOut&&a.longestOut.size>2000)push('largest output','var(--c-context)',a.longestOut.e,`${fmtChars(a.longestOut.size)} chars of tool output`);
+  const finals=s.events.filter(e=>e.kind==='message'&&e.role!=='user');
+  if(finals.length){const f=finals[finals.length-1];push('final answer','var(--accent)',f,String(f.text||'').slice(0,140).replace(/\s+/g,' '))}
+  return moments;
+}
 function insights(s){
+  const a=analyze(s);
   const stamped=s.events.filter(e=>e.timestamp&&!Number.isNaN(Date.parse(e.timestamp)));
   const times=stamped.map(e=>Date.parse(e.timestamp));
   const duration=times.length>1?Math.max(...times)-Math.min(...times):NaN;
   let pause=null;
-  for(let i=1;i<stamped.length;i++){const gap=Date.parse(stamped[i].timestamp)-Date.parse(stamped[i-1].timestamp);if(gap>0&&(!pause||gap>pause.gap))pause={gap,before:stamped[i-1],after:stamped[i]}}
+  for(let i=1;i<stamped.length;i++){const gap=Date.parse(stamped[i].timestamp)-Date.parse(stamped[i-1].timestamp);if(gap>0&&(!pause||gap>pause.gap))pause={gap,after:stamped[i]}}
   const totalChars=s.events.reduce((sum,e)=>sum+eventSize(e),0);
-  const toolCalls=Object.values(s.tools).reduce((a,b)=>a+b,0);
   const reasoningEvents=s.events.filter(e=>e.kind==='reasoning');
   const encrypted=reasoningEvents.filter(e=>e.encrypted).length;
   const reasoningNote=reasoningEvents.length?(encrypted?`${encrypted} of ${reasoningEvents.length} encrypted`:'all plaintext'):'none in this file';
-  const kpis=`<div class="panel"><h2>Session at a glance</h2><div class="kpis">
+  const jumpIdx=e=>s.events.indexOf(e);
+  const kpis=`<div class="panel"><h2>Agent behavior summary</h2><div class="kpis">
     <div class="kpi"><strong>${esc(fmtDur(duration))}</strong><span>wall clock</span></div>
-    <div class="kpi"><strong>${toolCalls}</strong><span>tool calls</span><span class="note">${Object.keys(s.tools).length} distinct tools</span></div>
+    <div class="kpi"><strong>${a.userMsgs.length}</strong><span>user turns</span></div>
+    <div class="kpi"><strong>${a.calls.length}</strong><span>tool calls</span><span class="note">${Object.keys(s.tools).length} distinct tools</span></div>
+    <div class="kpi"><strong style="${a.failures.length?'color:var(--c-error)':''}">${a.failures.length}</strong><span>failed calls</span></div>
+    <div class="kpi"><strong>${a.edits.length}</strong><span>edits attempted</span><span class="note">${a.files.size?`${a.files.size} file${a.files.size===1?'':'s'} touched`:''}</span></div>
+    <div class="kpi"><strong>${a.tests.length}</strong><span>test runs</span></div>
     <div class="kpi"><strong>${reasoningEvents.length}</strong><span>reasoning records</span><span class="note">${esc(reasoningNote)}</span></div>
     <div class="kpi"><strong>${esc(fmtChars(totalChars))}</strong><span>chars of content</span></div>
-    <div class="kpi"><strong>${esc(pause?fmtDur(pause.gap):'—')}</strong><span>longest pause</span>${pause?`<span class="note">before row ${pause.after.index} · ${esc(pause.after.title)}</span>`:''}</div>
+    <div class="kpi"><strong>${esc(a.longestOut?fmtChars(a.longestOut.size):'—')}</strong><span>longest tool output</span></div>
+    <div class="kpi"><strong>${esc(pause?fmtDur(pause.gap):'—')}</strong><span>longest pause</span>${pause?`<span class="note">before row ${pause.after.index}</span>`:''}</div>
   </div></div>`;
+  const failSet=new Set(a.failures.map(x=>x.i));
+  const density=`<div class="panel" style="margin-top:14px"><h3>Activity density</h3><div class="density">${s.events.map((e,i)=>`<span data-jump="${i}" class="${failSet.has(i)?'fail':''}" style="background:${kindColors[e.kind]||'var(--line-2)'}" title="${esc(e.kind)} · ${esc(e.title)} · row ${e.index}"></span>`).join('')}</div><div class="density-note">One tick per event in sequence — red underline marks failures. Click a tick to jump to it.</div></div>`;
+  const flowNodes=[];
+  s.events.forEach((e,i)=>{
+    if(e.kind==='message')flowNodes.push({label:e.role==='user'?'user':'answer',color:'var(--c-message)',i});
+    else if(e.kind==='reasoning'){const prev=flowNodes[flowNodes.length-1];if(prev&&prev.label.startsWith('reasoning')){prev.n=(prev.n||1)+1;prev.label=`reasoning ×${prev.n}`}else flowNodes.push({label:'reasoning',color:'var(--c-reasoning)',i})}
+    else if(e.kind==='tool_call'){const c=a.calls.find(c=>c.idx===i);flowNodes.push({label:e.title,color:'var(--c-tool)',i,status:c&&c.result?(c.failed?'err':'ok'):null})}
+  });
+  const shown=flowNodes.slice(0,150);
+  const flow=`<div class="panel" style="margin-top:14px"><h3>Tool flow</h3><div class="flow">${shown.map((n,idx)=>`<span class="node${n.status==='err'?' fail':''}" data-jump="${n.i}" style="--node-color:${n.color}"><span class="pip"></span>${esc(n.label)}${n.status?`<span class="st ${n.status}">${n.status==='ok'?'✓':'✗'}</span>`:''}</span>${idx<shown.length-1?'<span class="arrow">→</span>':''}`).join('')}${flowNodes.length>shown.length?`<span class="more">+${flowNodes.length-shown.length} more</span>`:''}</div></div>`;
+  const moments=findMoments(s,a);
+  const momentsPanel=`<div class="panel"><h3>Interesting moments</h3>${moments.length?`<div class="moments">${moments.map(m=>`<div class="moment" data-jump="${jumpIdx(m.e)}" style="--m-color:${m.color}"><span class="tag">${esc(m.tag)}</span><span class="what">${esc(m.what)}</span><span class="num">row ${m.e.index}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:0">Nothing notable detected.</p>'}</div>`;
   const kinds=Object.entries(s.counts);
-  const mix=`<div class="panel" style="margin-top:14px"><h3>Event mix</h3><div class="mixbar">${kinds.map(([k,v])=>`<div style="flex:${v};background:${kindColors[k]||'var(--line-2)'}" title="${esc(k)}: ${v}"></div>`).join('')}</div><div class="legend">${kinds.map(([k,v])=>`<span><span class="swatch" style="background:${kindColors[k]||'var(--line-2)'}"></span>${esc(k.replaceAll('_',' '))} · ${v}</span>`).join('')}</div></div>`;
+  const mix=`<div class="panel"><h3>Event mix</h3><div class="mixbar">${kinds.map(([k,v])=>`<div style="flex:${v};background:${kindColors[k]||'var(--line-2)'}" title="${esc(k)}: ${v}"></div>`).join('')}</div><div class="legend">${kinds.map(([k,v])=>`<span><span class="swatch" style="background:${kindColors[k]||'var(--line-2)'}"></span>${esc(k.replaceAll('_',' '))} · ${v}</span>`).join('')}</div></div>`;
   const toolMax=Math.max(1,...Object.values(s.tools));
   const toolRows=Object.entries(s.tools).sort((a,b)=>b[1]-a[1]).slice(0,12);
   const toolPanel=`<div class="panel"><h3>Tool leaderboard</h3>${toolRows.length?`<div class="bars">${toolRows.map(([name,n])=>`<div class="bar-row"><span class="name" title="${esc(name)}">${esc(name)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${Math.max(4,Math.round(n/toolMax*100))}%"></span></span><span class="num">×${n}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:0">No tool calls in this trace.</p>'}</div>`;
-  const heavy=s.events.map((e,i)=>({e,size:eventSize(e)})).sort((a,b)=>b.size-a.size).slice(0,6).filter(x=>x.size>0);
-  const heavyPanel=`<div class="panel"><h3>Heaviest events</h3><div class="heavy-list">${heavy.map(({e,size})=>`<div class="heavy-row"><span class="swatch" style="background:${kindColors[e.kind]||'var(--line-2)'}"></span><span class="t">${esc(e.title)}</span><span class="num">row ${e.index} · ${esc(fmtChars(size))} chars</span></div>`).join('')}</div></div>`;
   const meta=`<div class="panel" style="margin-top:14px"><h3>Run metadata</h3><pre>${esc(pretty(s.metadata))}</pre></div>`;
-  return hero(s)+kpis+mix+`<div class="hero" style="margin-top:14px">${toolPanel}${heavyPanel}</div>`+meta;
+  return hero(s)+kpis+density+flow+`<div class="hero" style="margin-top:14px">${momentsPanel}${mix}</div>`+`<div class="hero" style="margin-top:14px">${toolPanel}<div class="panel"><h3>Files touched</h3>${a.files.size?`<pre>${esc([...a.files].join('\n'))}</pre>`:'<p class="muted" style="margin:0">No file edits detected.</p>'}</div></div>`+meta;
+}
+const SECRET_PATTERNS=[
+ {label:'Private key block',sev:'high',re:/-----BEGIN [A-Z ]*PRIVATE KEY-----/g},
+ {label:'AWS access key',sev:'high',re:/\bAKIA[0-9A-Z]{16}\b/g},
+ {label:'GitHub token',sev:'high',re:/\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{20,}\b|\bgithub_pat_[A-Za-z0-9_]{20,}\b/g},
+ {label:'API key (sk-…)',sev:'high',re:/\bsk-[A-Za-z0-9_-]{20,}\b/g},
+ {label:'Slack token',sev:'high',re:/\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g},
+ {label:'Google API key',sev:'high',re:/\bAIza[0-9A-Za-z_-]{35}\b/g},
+ {label:'URL with embedded credentials',sev:'high',re:/\bhttps?:\/\/[^\/\s:@"']+:[^@\s\/"']+@[^\s"'<>]+/g},
+ {label:'Bearer token',sev:'medium',re:/\bBearer\s+[A-Za-z0-9._~+/=-]{20,}/g},
+ {label:'JWT',sev:'medium',re:/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/g},
+ {label:'Secret-looking env assignment',sev:'medium',re:/\b[A-Z][A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIALS?)\s*[=:]\s*['"]?[^\s'",}{]{6,}/g},
+ {label:'Email address',sev:'medium',re:/\b[\w.+-]+@[\w-]+\.[A-Za-z]{2,}(?:\.[A-Za-z]{2,})?\b/g},
+ {label:'Home-directory path (reveals username)',sev:'low',re:/(?:\/home|\/Users)\/[A-Za-z0-9._-]+/g},
+ {label:'Private IP address',sev:'low',re:/\b(?:10|192\.168|172\.(?:1[6-9]|2\d|3[01]))(?:\.\d{1,3}){2,3}\b/g},
+];
+function maskSecret(v){v=String(v);return v.length<=9?v.slice(0,2)+'…':v.slice(0,5)+'…'+v.slice(-3)}
+function privacy(s){
+  const groups=[];
+  SECRET_PATTERNS.forEach(p=>{
+    const byValue=new Map();
+    s.events.forEach((e,i)=>{
+      const text=eventText(e);
+      let count=0;
+      for(const m of text.matchAll(p.re)){
+        if(++count>200)break;
+        const value=m[0];
+        if(!byValue.has(value))byValue.set(value,new Set());
+        byValue.get(value).add(i);
+      }
+    });
+    if(byValue.size)groups.push({...p,finds:[...byValue.entries()].slice(0,40)});
+  });
+  const totals={high:0,medium:0,low:0};
+  groups.forEach(g=>totals[g.sev]+=g.finds.length);
+  const total=totals.high+totals.medium+totals.low;
+  const verdict=total?`<div class="scan-verdict">${totals.high?`<span class="sev high">${totals.high} high</span>`:''}${totals.medium?`<span class="sev medium">${totals.medium} medium</span>`:''}${totals.low?`<span class="sev low">${totals.low} low</span>`:''}<span class="muted" style="font-size:13px">distinct values matched — review each before sharing this trace or screenshots of it</span></div>`:`<div class="scan-verdict"><span class="sev clean">no matches</span><span class="muted" style="font-size:13px">none of the heuristic patterns matched — this is not a guarantee the trace is safe to share</span></div>`;
+  const sevOrder={high:0,medium:1,low:2};
+  const body=groups.sort((a,b)=>sevOrder[a.sev]-sevOrder[b.sev]).map(g=>`<div class="find-group"><h4><span class="sev ${g.sev}" style="font-size:10.5px;padding:2px 9px">${g.sev}</span>${esc(g.label)}<span class="cnt">${g.finds.length} distinct value${g.finds.length===1?'':'s'}</span></h4>${g.finds.map(([value,rows])=>`<div class="find"><code title="masked">${esc(maskSecret(value))}</code><span class="rows">${[...rows].slice(0,8).map(i=>`<button data-jump="${i}">row ${s.events[i].index}</button>`).join('')}${rows.size>8?`<span class="muted" style="font-size:11px">+${rows.size-8}</span>`:''}</span></div>`).join('')}</div>`).join('');
+  const note=`<p class="muted" style="margin:14px 0 0;font-size:13px">Values are masked on screen; the full values remain only in your local file. The scan runs entirely in your browser — pattern-based, so treat it as a checklist, not a verdict.</p>`;
+  return hero(s)+`<div class="panel"><h2>Privacy scan</h2>${verdict}${body}${note}</div>`;
+}
+function jumpTo(i){
+  if(!session)return;
+  const e=session.events[i];if(!e)return;
+  if(selectedKinds&&!selectedKinds.has(e.kind))selectedKinds.add(e.kind);
+  collapsedEvents.delete(i);
+  const q=new URLSearchParams(location.search);q.set('variant','timeline');history.replaceState(null,'','?'+q);
+  render();
+  requestAnimationFrame(()=>{const el=document.querySelector(`.event[data-event-index="${i}"]`);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700)}});
 }
 function schema(s){return hero(s)+`<div class="panel"><h2>Record shapes observed</h2><div class="schema-grid">${Object.entries(s.schema).map(([k,v])=>`<div class="stat"><strong>${v}</strong><code>${esc(k)}</code></div>`).join('')}</div></div><div class="panel" style="margin-top:14px"><h2>Normalized event JSON</h2><pre>${esc(pretty(s.events))}</pre></div>`}
 function currentVariant(){const q=new URLSearchParams(location.search);return variants.some(v=>v[0]===q.get('variant'))?q.get('variant'):'timeline'}
 function render(){
   if(!session)return;
   const variant=currentVariant();
-  document.getElementById('app').innerHTML=variant==='timeline'?timeline(session):variant==='insights'?insights(session):schema(session);
+  document.getElementById('app').innerHTML=variant==='timeline'?timeline(session):variant==='insights'?insights(session):variant==='privacy'?privacy(session):schema(session);
   document.getElementById('variant-label').textContent=variants.find(v=>v[0]===variant)[1];
   const tabs=document.getElementById('tabs');
   tabs.innerHTML=variants.map(([id,label])=>`<button data-variant="${id}" class="${id===variant?'active':''}">${label}</button>`).join('');
   tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{const q=new URLSearchParams(location.search);q.set('variant',b.dataset.variant);history.replaceState(null,'','?'+q);render()});
+  document.querySelectorAll('[data-jump]').forEach(n=>n.onclick=()=>jumpTo(Number(n.dataset.jump)));
   if(variant!=='timeline')return;
   const kinds=[...new Set(session.events.map(e=>e.kind))];
   document.querySelectorAll('.filters button').forEach(button=>button.onclick=()=>{const kind=button.dataset.kind;if(kind==='all')selectedKinds=new Set(kinds);else if(selectedKinds.has(kind))selectedKinds.delete(kind);else selectedKinds.add(kind);render()});
