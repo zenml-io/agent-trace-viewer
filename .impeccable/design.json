@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-20T00:00:00Z",
+  "title": "Design System: Agent Trace Viewer",
+  "extensions": {
+    "colorMeta": {
+      "amber": { "role": "primary", "displayName": "Signal Amber", "canonical": "#ffb000", "tonalRamp": ["oklch(25% 0.08 75)", "oklch(37% 0.11 75)", "oklch(49% 0.13 75)", "oklch(61% 0.15 75)", "oklch(73% 0.16 75)", "oklch(81% 0.165 78)", "oklch(89% 0.12 82)", "oklch(95% 0.06 85)"] },
+      "amber-ink": { "role": "primary", "displayName": "Amber Ink", "canonical": "#cf8f00", "tonalRamp": ["oklch(24% 0.07 74)", "oklch(34% 0.09 74)", "oklch(44% 0.11 74)", "oklch(54% 0.12 74)", "oklch(64% 0.13 75)", "oklch(74% 0.14 77)", "oklch(85% 0.11 80)", "oklch(94% 0.05 84)"] },
+      "graphite": { "role": "neutral", "displayName": "Fascia Graphite", "canonical": "#17191b", "tonalRamp": ["oklch(16% 0.006 240)", "oklch(24% 0.007 240)", "oklch(34% 0.008 240)", "oklch(46% 0.008 240)", "oklch(58% 0.008 240)", "oklch(70% 0.008 240)", "oklch(82% 0.007 240)", "oklch(93% 0.005 240)"] },
+      "black-surround": { "role": "neutral", "displayName": "Black Surround", "canonical": "#0a0b0c", "tonalRamp": ["oklch(12% 0.004 240)", "oklch(20% 0.005 240)", "oklch(30% 0.006 240)", "oklch(42% 0.006 240)", "oklch(54% 0.006 240)", "oklch(68% 0.006 240)", "oklch(80% 0.005 240)", "oklch(92% 0.004 240)"] },
+      "ink": { "role": "neutral", "displayName": "Silkscreen Ink", "canonical": "#e6e9e5", "tonalRamp": ["oklch(20% 0.005 140)", "oklch(32% 0.006 140)", "oklch(44% 0.007 140)", "oklch(56% 0.008 140)", "oklch(68% 0.008 140)", "oklch(78% 0.007 140)", "oklch(87% 0.006 140)", "oklch(95% 0.004 140)"] },
+      "matrix": { "role": "neutral", "displayName": "Matrix Black", "canonical": "#0d0c0a", "tonalRamp": ["oklch(13% 0.008 90)", "oklch(21% 0.01 90)", "oklch(31% 0.015 90)", "oklch(43% 0.02 90)", "oklch(55% 0.02 90)", "oklch(69% 0.02 90)", "oklch(82% 0.015 90)", "oklch(93% 0.01 90)"] },
+      "paper": { "role": "neutral", "displayName": "Paper Label", "canonical": "#e9e6d8", "tonalRamp": ["oklch(22% 0.015 100)", "oklch(34% 0.02 100)", "oklch(46% 0.025 100)", "oklch(58% 0.025 100)", "oklch(70% 0.025 100)", "oklch(80% 0.025 100)", "oklch(90% 0.02 100)", "oklch(96% 0.01 100)"] },
+      "led-message": { "role": "tertiary", "displayName": "Message Green", "canonical": "#46c46e" },
+      "led-instruction": { "role": "tertiary", "displayName": "Instruction Orange", "canonical": "#e06a3b" },
+      "led-tool": { "role": "tertiary", "displayName": "Tool Blue", "canonical": "#56b6c8" },
+      "led-reasoning": { "role": "tertiary", "displayName": "Reasoning Gold", "canonical": "#e0b23e" },
+      "led-context": { "role": "tertiary", "displayName": "Context Grey", "canonical": "#93a2ac" },
+      "led-error": { "role": "tertiary", "displayName": "Error Red", "canonical": "#ff5a4e" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing headline only — silk-screened condensed caps at panel scale." },
+      "headline": { "displayName": "Headline", "purpose": "Silk-screened section headings on a 1px hairline rule." },
+      "title": { "displayName": "Key Label", "purpose": "Every button, tab, filter, and pill label — silkscreened caps." },
+      "body": { "displayName": "Body", "purpose": "Monospace prose, hints, and payloads — the machine's documentation voice." },
+      "matrix": { "displayName": "Matrix Digits", "purpose": "Doto dot-matrix readouts, lit amber inside matrix windows only." },
+      "label": { "displayName": "LED Caption", "purpose": "Printed captions under matrix digits, in muted khaki #a79f8a." }
+    },
+    "shadows": [
+      { "name": "bevel-up", "value": "0 1px 0 #ffffff12 inset, 0 1px 2px #00000090", "purpose": "Raised plates: event cards, source bays, panels." },
+      { "name": "bevel-key", "value": "inset 0 1px 0 #ffffff17, 0 1px 1px #000000a0", "purpose": "Pressable keys: tabs, filters, toggles, flow nodes." },
+      { "name": "recess-shadow", "value": "inset 0 2px 4px #000000a0", "purpose": "Sunken trays and wells: tab tray, import row, ghost events." },
+      { "name": "matrix-shadow", "value": "inset 0 2px 8px #000000d0, 0 1px 0 #ffffff10", "purpose": "Deep display wells with a hairline lit lip below." },
+      { "name": "key-wall", "value": "inset 0 1px 0 #ffffff1f, 0 3px 0 #0b0c0d, 0 4px 6px #000000a0", "purpose": "Primary key's visible 3px wall; press shortens it to 1px." },
+      { "name": "phosphor-glow", "value": "text-shadow: 0 0 6px #ffb00044", "purpose": "Amber Doto digits inside matrix windows — the only glow in the system." },
+      { "name": "silkscreen", "value": "text-shadow: 0 1px 1px #000000a0", "purpose": "Pale display text on the fascia — the dark drop seats the ink into the surface." },
+      { "name": "float", "value": "0 8px 22px #000000b0, inset 0 1px 0 #ffffff14", "purpose": "The fixed transport cluster only — separate hardware hovering over the fascia." }
+    ],
+    "motion": [
+      { "name": "snap-press", "value": "transform: translateY(1px); transition: none", "purpose": "Universal :active press. Nothing glides; state changes are instantaneous." },
+      { "name": "flashfade", "value": "flashfade 1.6s ease-out (amber outline fading to transparent)", "purpose": "Jump-to-event flash — the system's only keyframe animation; disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "narrow", "value": "760px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Key",
+      "kind": "button",
+      "refersTo": "key",
+      "description": "The universal beveled snap key: tabs, filters, toggles, sample buttons.",
+      "html": "<button class=\"ds-key\">Timeline</button>",
+      "css": ".ds-key{border:1px solid var(--line,#3a4045);background:linear-gradient(180deg,#2b3034,#1e2226);color:var(--engrave,#d5d9d5);border-radius:4px;padding:6px 13px;cursor:pointer;font-family:'Barlow Condensed',ui-sans-serif,system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;box-shadow:inset 0 1px 0 #ffffff17,0 1px 1px #000000a0}.ds-key:hover{border-color:#6a7278}.ds-key:active{transform:translateY(1px)}.ds-key:focus-visible{outline:2px solid var(--amber-ink,#cf8f00);outline-offset:2px}"
+    },
+    {
+      "name": "Active Key",
+      "kind": "button",
+      "refersTo": "key-active",
+      "description": "Selected key state: an amber indicator groove under the top edge; the key stays graphite.",
+      "html": "<button class=\"ds-key-active\">Insights</button>",
+      "css": ".ds-key-active{border:1px solid var(--line,#3a4045);background:linear-gradient(180deg,#2b3034,#1e2226);color:var(--ink,#e6e9e5);border-radius:4px;padding:6px 13px;cursor:pointer;font-family:'Barlow Condensed',ui-sans-serif,system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;box-shadow:inset 0 3px 0 var(--amber,#ffb000),inset 0 1px 0 #ffffff14,0 1px 1px #000000a0}.ds-key-active:active{transform:translateY(1px)}.ds-key-active:focus-visible{outline:2px solid var(--amber-ink,#cf8f00);outline-offset:2px}"
+    },
+    {
+      "name": "Primary Key",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The transport import key: larger and lighter, with a visible 3px key wall that compresses on press.",
+      "html": "<button class=\"ds-key-primary\">Import a trace</button>",
+      "css": ".ds-key-primary{border:1px solid #6a7278;background:linear-gradient(180deg,#33383d,#22262a);color:var(--ink,#e6e9e5);border-radius:6px;padding:13px 26px;cursor:pointer;font-family:'Barlow Condensed',ui-sans-serif,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:.1em;text-transform:uppercase;box-shadow:inset 0 1px 0 #ffffff1f,0 3px 0 #0b0c0d,0 4px 6px #000000a0}.ds-key-primary:hover{border-color:#7d868e}.ds-key-primary:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #ffffff1f,0 1px 0 #0b0c0d,0 2px 3px #000000a0}.ds-key-primary:focus-visible{outline:2px solid var(--amber-ink,#cf8f00);outline-offset:2px}"
+    },
+    {
+      "name": "Matrix Window",
+      "kind": "custom",
+      "refersTo": "matrix-window",
+      "description": "The signature recessed display: amber Doto digits with phosphor glow over an LED-label caption.",
+      "html": "<div class=\"ds-matrix\"><strong>128</strong><span>tool calls</span></div>",
+      "css": ".ds-matrix{background:#0d0c0a;border:1px solid #332f28;border-radius:4px;padding:10px 12px;min-width:104px;display:inline-block;box-shadow:inset 0 2px 8px #000000d0,0 1px 0 #ffffff10}.ds-matrix strong{display:block;font-family:'Doto',ui-monospace,monospace;font-weight:700;font-size:19px;color:#ffb000;text-shadow:0 0 6px #ffb00044}.ds-matrix span{display:block;margin-top:3px;font-family:'Barlow Condensed',ui-sans-serif,system-ui,sans-serif;font-weight:500;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#a79f8a}"
+    },
+    {
+      "name": "Event Plate",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "A raised timeline plate with a square kind LED chip; hover lifts the border only.",
+      "html": "<div class=\"ds-event\" data-kind=\"tool\" tabindex=\"0\"><div class=\"ds-event-head\"><strong>Shell command</strong><span class=\"ds-badge\">row 42 · 12:04:31</span></div><div class=\"ds-role\">tool_call · bash</div></div>",
+      "css": ".ds-event{position:relative;background:linear-gradient(180deg,#202427,#1a1e21);border:1px solid #3a4045;border-radius:6px;padding:12px 16px 12px 34px;box-shadow:0 1px 0 #ffffff12 inset,0 1px 2px #00000090;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#e6e9e5}.ds-event::before{content:\"\";position:absolute;left:14px;top:18px;width:8px;height:8px;border-radius:2px;background:#56b6c8;box-shadow:0 0 0 1px #00000038,inset 0 1px 1px #ffffff50}.ds-event:hover{border-color:#6a7278}.ds-event:focus-visible{outline:2px solid #cf8f00;outline-offset:2px}.ds-event-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline}.ds-event-head strong{font-family:'Barlow Condensed',ui-sans-serif,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:.03em;color:#e6e9e5}.ds-badge{font-size:11.5px;color:#828b86;white-space:nowrap}.ds-role{color:#828b86;font-size:12px;margin-top:6px}"
+    },
+    {
+      "name": "Paper Search Input",
+      "kind": "input",
+      "refersTo": "paper-label",
+      "description": "A glued-on light cassette-label input with dark text; amber-ink caret and focus border.",
+      "html": "<input class=\"ds-input\" type=\"search\" placeholder=\"Search events — text, tool names, payloads…\">",
+      "css": ".ds-input{background:#e9e6d8;border:1px solid #6b6553;color:#1b1b1b;border-radius:4px;padding:9px 13px;font:13.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;caret-color:#cf8f00;box-shadow:inset 0 2px 3px #00000018;min-width:280px}.ds-input::placeholder{color:#6b6553}.ds-input:focus-visible{outline:2px solid #cf8f00;outline-offset:1px;border-color:#cf8f00}"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "matrix-window",
+      "description": "A lit matrix pill for capability and severity states; color is the state.",
+      "html": "<span class=\"ds-pill ds-pill-captured\">captured</span> <span class=\"ds-pill ds-pill-partial\">partial</span> <span class=\"ds-pill ds-pill-missing\">not observed</span>",
+      "css": ".ds-pill{display:inline-block;font-family:'Barlow Condensed',ui-sans-serif,system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;border-radius:3px;padding:2px 9px;white-space:nowrap;background:#0d0c0a;border:1px solid #332f28;box-shadow:inset 0 1px 4px #000000a0}.ds-pill-captured{color:#6fd88f}.ds-pill-partial{color:#ffb000}.ds-pill-missing{color:#ff6b5e}"
+    },
+    {
+      "name": "Caution Plate",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "Dim amber-lit warning plate with a hazard stripe on its left edge.",
+      "html": "<div class=\"ds-caution\"><strong>Traces can contain secrets and private data.</strong> The file stays in this browser tab.</div>",
+      "css": ".ds-caution{position:relative;background:#26200f;border:1px solid #6b5a1e;color:#e0c878;padding:10px 14px 10px 24px;border-radius:6px;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}.ds-caution::before{content:\"\";position:absolute;top:0;bottom:0;left:0;width:8px;background:repeating-linear-gradient(135deg,#e0b23e 0 8px,#2a2a24 8px 16px)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Blackface Tape Deck",
+    "overview": "The entire interface is one machined fascia: brushed graphite (#17191b) set into a black plastic surround (#0a0b0c), covered in pale silk-screened condensed-caps labels, beveled snap keys, light paper cassette-label insets, and recessed near-black display windows where the data glows amber. The trace is a tape; reading it is a playback. Though dark, this is not the dev-console dashboard the category always ships: every pixel is hardware-literal — the darkness is molded plastic and brushed metal, never a void. Every surface states its material: raised plates catch a faint white top bevel; recesses fall into shadow; matrix windows sink deepest with a hairline lit lip; labels are silk-screened. Nothing floats free of the fascia except the fixed transport cluster, which is itself a piece of the same hardware.",
+    "keyCharacteristics": [
+      "One dark graphite fascia in a black surround; the only light surfaces are paper cassette-label insets and the amber-lit displays",
+      "Amber (#ffb000) strictly means active/lit — never decoration",
+      "Physical depth grammar: bevel up, recess in, matrix deep — no soft ambient shadows",
+      "Silk-screened uppercase Barlow Condensed labels; ui-monospace body; Doto dot-matrix digits",
+      "Interactions snap (1–2px translateY press), nothing glides — zero transitions",
+      "Event kinds are coded by small square LED chips, never by colored borders or tinted cards"
+    ],
+    "rules": [
+      { "name": "The Amber Means Active Rule", "body": "Amber appears only where something is switched on: lit digits, the active key's indicator groove, the focus outline (as amber-ink), selection, and the jump flash. It is never a decorative accent, background, or brand color.", "section": "colors" },
+      { "name": "The LED Chip Rule", "body": "Event kinds are coded by an 8px square chip (2px radius, dark rim, white inner top-light) — never by colored card borders, tinted backgrounds, or colored text.", "section": "colors" },
+      { "name": "The Paper Is Light Rule", "body": "Paper insets keep their warm light fill and dark text on the dark fascia — they are printed cassette labels, not theme-inverted UI. Never darken paper to match the deck.", "section": "colors" },
+      { "name": "The Silkscreen Rule", "body": "Barlow Condensed is always uppercase, weight 500 or 600, letter-spaced, and — on the fascia — printed pale with the dark 1px drop shadow. It never sets body copy.", "section": "typography" },
+      { "name": "The Doto Discipline Rule", "body": "Doto appears only as lit amber content inside a matrix window. Never on the fascia, never in silkscreen ink, never for prose.", "section": "typography" },
+      { "name": "The Machined Depth Rule", "body": "Every shadow is a fabrication cue (bevel, recess, well). No blur-heavy ambient shadows, no glassmorphism, no glow outside matrix windows.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do give every surface a material: bevel-up for raised plates, recess-shadow for wells, matrix-shadow for displays. A flat unshadowed rectangle is foreign here.",
+      "Do silkscreen all Barlow Condensed text on the fascia with text-shadow: 0 1px 1px #000000a0, uppercase, letter-spaced, in pale engrave ink.",
+      "Do express pressing as translateY(1px) (2px for the primary key) with zero transition, and hover as a border lifting to #6a7278.",
+      "Do put any new numeric readout in a matrix window as amber Doto with the 0 0 6px #ffb00044 glow and an LED-Label caption.",
+      "Do keep focus visible everywhere: 2px solid var(--amber-ink) (#cf8f00) outline, 2px offset — including on focusable non-buttons like flashed events.",
+      "Do preserve the accessibility scaffolding: the sr-only polite live region, tablist semantics on the view tabs, and the prefers-reduced-motion kill switch.",
+      "Do keep the page self-contained under CSP default-src 'none': fonts and images as data: URIs only, all CSS and JS inline, zero network requests."
+    ],
+    "donts": [
+      "Don't use amber for anything that is not active or lit — no amber branding, amber fills at rest, or amber hover states.",
+      "Don't add transitions or easing. Nothing glides: state changes are instantaneous snaps. The jump flash is the only animation, and reduced-motion disables it.",
+      "Don't add light surfaces outside the paper insets. The deck is dark graphite; a white panel or light card breaks the world — paper cassette labels and lit displays are the only bright material.",
+      "Don't let the dark fascia read as a dev console: no pure-black flat panels, no terminal-green accents, no borderless dark-on-dark rectangles — every dark surface carries its machined bevel, recess, or well.",
+      "Don't color-code events with tinted card backgrounds, colored borders, or colored titles — the square LED chip carries the kind.",
+      "Don't apply glow to anything outside a matrix window, and never to non-Doto text.",
+      "Don't use radii above 8px, pill shapes, circles (the brand power dot is the sole exception), or borderless surfaces.",
+      "Don't introduce a second display face or a webfont loaded over the network; the three-voice system (Barlow Condensed / ui-monospace / Doto) is complete."
+    ]
+  }
+}
