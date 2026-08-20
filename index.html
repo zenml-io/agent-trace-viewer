@@ -233,18 +233,27 @@ details summary:hover{color:var(--muted)}
 .event.ghost .event-title strong{font-weight:500}
 .event.ghost .event-title strong::after{content:" · hidden";font-weight:400;color:var(--faint)}
 
-/* matrix + schema */
-.matrix{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
-.matrix th{
-  text-align:left;padding:9px 11px;color:var(--faint);font-size:11.5px;
-  text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line-2);
-}
-.matrix td{text-align:left;padding:12px 11px;border-bottom:1px solid var(--line);vertical-align:top}
-.matrix tr:last-child td{border-bottom:0}
-.status{font-weight:700;font-size:13px;white-space:nowrap}
-.status.captured{color:var(--accent)}
-.status.partial{color:var(--c-reasoning)}
-.status.not-observed{color:var(--c-error)}
+/* insights + schema */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.kpi{background:#0d100e;border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.kpi strong{display:block;font-size:21px;letter-spacing:0}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi .note{display:block;font-size:11.5px;color:var(--faint);margin-top:2px;overflow-wrap:anywhere}
+.mixbar{display:flex;height:14px;border-radius:7px;overflow:hidden;border:1px solid var(--line);background:#0d100e;margin:4px 0 12px}
+.mixbar div{min-width:3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+.legend .swatch{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px}
+.bars{display:flex;flex-direction:column;gap:9px;margin-top:6px}
+.bar-row{display:grid;grid-template-columns:minmax(90px,230px) 1fr 52px;gap:10px;align-items:center;font-size:13px}
+.bar-row .name{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row .num{text-align:right;color:var(--faint);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.bar-track{height:10px;border-radius:5px;background:#0d100e;border:1px solid var(--line);overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent-dim),var(--accent))}
+.heavy-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.heavy-row{display:flex;gap:10px;align-items:baseline;font-size:13px;min-width:0}
+.heavy-row .swatch{flex:none;width:9px;height:9px;border-radius:3px;align-self:center}
+.heavy-row .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.heavy-row .num{margin-left:auto;color:var(--faint);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
 .schema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
 
 /* switcher */
@@ -271,7 +280,7 @@ details summary:hover{color:var(--muted)}
   .event-head{flex-direction:column;align-items:flex-start;gap:6px}
   .event-actions{justify-content:flex-start}
   .badge{white-space:normal}
-  .matrix{font-size:13px}
+  .bar-row{grid-template-columns:minmax(70px,130px) 1fr 48px}
   .tabs{display:none !important}
   .topbar{gap:10px}
   .brand{font-size:12.5px}
@@ -356,7 +365,7 @@ details summary:hover{color:var(--muted)}
 <script>
 'use strict';
 let selectedSource='codex';let session=null;let selectedKinds=null;const collapsedEvents=new Set();
-const variants=[['timeline','Timeline'],['anatomy','Replay evidence'],['schema','Raw schema']];
+const variants=[['timeline','Timeline'],['insights','Insights'],['schema','Raw schema']];
 const sourceNames={codex:'Codex',claude:'Claude Code',agy:'Antigravity'};
 const sourceHints={codex:'Choose a .jsonl or .json file',claude:'Choose a .jsonl file',agy:'Choose transcript_full.jsonl for untruncated tool output'};
 const kindColors={message:'var(--c-message)',instruction:'var(--c-instruction)',tool_call:'var(--c-tool)',tool_result:'var(--c-tool)',reasoning:'var(--c-reasoning)',context:'var(--c-context)',state:'var(--c-context)',metadata:'var(--c-context)',unknown:'var(--c-context)'};
@@ -425,13 +434,43 @@ function timeline(s){
   }).join('');
   return hero(s)+filters+`<div class="timeline">${events}</div>`;
 }
-function anatomy(s){return hero(s)+`<div class="panel"><h2>What this file can support</h2><table class="matrix"><thead><tr><th>Replay input</th><th>Verdict</th><th>Observed evidence</th></tr></thead><tbody>${Object.entries(s.matrix).map(([name,v])=>`<tr><td><strong>${esc(name)}</strong></td><td class="status ${esc(v.status.replaceAll(' ','-'))}">${esc(v.status)}</td><td class="muted">${esc(v.evidence)}</td></tr>`).join('')}</tbody></table></div><div class="hero" style="margin-top:14px"><div class="panel"><h3>Tool names</h3><pre>${esc(pretty(s.tools))}</pre></div><div class="panel"><h3>Run metadata</h3><pre>${esc(pretty(s.metadata))}</pre></div></div>`}
+function fmtDur(ms){if(!Number.isFinite(ms)||ms<0)return '—';if(ms<1000)return `${ms} ms`;const s=ms/1000;if(s<90)return `${s.toFixed(1)} s`;const m=Math.floor(s/60);if(m<90)return `${m} m ${Math.round(s%60)} s`;return `${Math.floor(m/60)} h ${m%60} m`}
+function fmtChars(n){return n>=100000?`${Math.round(n/1000)}k`:n>=10000?`${(n/1000).toFixed(1)}k`:n.toLocaleString()}
+function eventSize(e){return (e.text===undefined?0:String(e.text).length)+(e.data===undefined?0:pretty(e.data).length)}
+function insights(s){
+  const stamped=s.events.filter(e=>e.timestamp&&!Number.isNaN(Date.parse(e.timestamp)));
+  const times=stamped.map(e=>Date.parse(e.timestamp));
+  const duration=times.length>1?Math.max(...times)-Math.min(...times):NaN;
+  let pause=null;
+  for(let i=1;i<stamped.length;i++){const gap=Date.parse(stamped[i].timestamp)-Date.parse(stamped[i-1].timestamp);if(gap>0&&(!pause||gap>pause.gap))pause={gap,before:stamped[i-1],after:stamped[i]}}
+  const totalChars=s.events.reduce((sum,e)=>sum+eventSize(e),0);
+  const toolCalls=Object.values(s.tools).reduce((a,b)=>a+b,0);
+  const reasoningEvents=s.events.filter(e=>e.kind==='reasoning');
+  const encrypted=reasoningEvents.filter(e=>e.encrypted).length;
+  const reasoningNote=reasoningEvents.length?(encrypted?`${encrypted} of ${reasoningEvents.length} encrypted`:'all plaintext'):'none in this file';
+  const kpis=`<div class="panel"><h2>Session at a glance</h2><div class="kpis">
+    <div class="kpi"><strong>${esc(fmtDur(duration))}</strong><span>wall clock</span></div>
+    <div class="kpi"><strong>${toolCalls}</strong><span>tool calls</span><span class="note">${Object.keys(s.tools).length} distinct tools</span></div>
+    <div class="kpi"><strong>${reasoningEvents.length}</strong><span>reasoning records</span><span class="note">${esc(reasoningNote)}</span></div>
+    <div class="kpi"><strong>${esc(fmtChars(totalChars))}</strong><span>chars of content</span></div>
+    <div class="kpi"><strong>${esc(pause?fmtDur(pause.gap):'—')}</strong><span>longest pause</span>${pause?`<span class="note">before row ${pause.after.index} · ${esc(pause.after.title)}</span>`:''}</div>
+  </div></div>`;
+  const kinds=Object.entries(s.counts);
+  const mix=`<div class="panel" style="margin-top:14px"><h3>Event mix</h3><div class="mixbar">${kinds.map(([k,v])=>`<div style="flex:${v};background:${kindColors[k]||'var(--line-2)'}" title="${esc(k)}: ${v}"></div>`).join('')}</div><div class="legend">${kinds.map(([k,v])=>`<span><span class="swatch" style="background:${kindColors[k]||'var(--line-2)'}"></span>${esc(k.replaceAll('_',' '))} · ${v}</span>`).join('')}</div></div>`;
+  const toolMax=Math.max(1,...Object.values(s.tools));
+  const toolRows=Object.entries(s.tools).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const toolPanel=`<div class="panel"><h3>Tool leaderboard</h3>${toolRows.length?`<div class="bars">${toolRows.map(([name,n])=>`<div class="bar-row"><span class="name" title="${esc(name)}">${esc(name)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${Math.max(4,Math.round(n/toolMax*100))}%"></span></span><span class="num">×${n}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:0">No tool calls in this trace.</p>'}</div>`;
+  const heavy=s.events.map((e,i)=>({e,size:eventSize(e)})).sort((a,b)=>b.size-a.size).slice(0,6).filter(x=>x.size>0);
+  const heavyPanel=`<div class="panel"><h3>Heaviest events</h3><div class="heavy-list">${heavy.map(({e,size})=>`<div class="heavy-row"><span class="swatch" style="background:${kindColors[e.kind]||'var(--line-2)'}"></span><span class="t">${esc(e.title)}</span><span class="num">row ${e.index} · ${esc(fmtChars(size))} chars</span></div>`).join('')}</div></div>`;
+  const meta=`<div class="panel" style="margin-top:14px"><h3>Run metadata</h3><pre>${esc(pretty(s.metadata))}</pre></div>`;
+  return hero(s)+kpis+mix+`<div class="hero" style="margin-top:14px">${toolPanel}${heavyPanel}</div>`+meta;
+}
 function schema(s){return hero(s)+`<div class="panel"><h2>Record shapes observed</h2><div class="schema-grid">${Object.entries(s.schema).map(([k,v])=>`<div class="stat"><strong>${v}</strong><code>${esc(k)}</code></div>`).join('')}</div></div><div class="panel" style="margin-top:14px"><h2>Normalized event JSON</h2><pre>${esc(pretty(s.events))}</pre></div>`}
 function currentVariant(){const q=new URLSearchParams(location.search);return variants.some(v=>v[0]===q.get('variant'))?q.get('variant'):'timeline'}
 function render(){
   if(!session)return;
   const variant=currentVariant();
-  document.getElementById('app').innerHTML=variant==='timeline'?timeline(session):variant==='anatomy'?anatomy(session):schema(session);
+  document.getElementById('app').innerHTML=variant==='timeline'?timeline(session):variant==='insights'?insights(session):schema(session);
   document.getElementById('variant-label').textContent=variants.find(v=>v[0]===variant)[1];
   const tabs=document.getElementById('tabs');
   tabs.innerHTML=variants.map(([id,label])=>`<button data-variant="${id}" class="${id===variant?'active':''}">${label}</button>`).join('');

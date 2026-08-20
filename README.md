@@ -35,7 +35,7 @@ copied content.
 Use the arrow switcher (or ←/→ keys) to cycle between three views per trace:
 
 1. **Timeline** — the normalized event stream, filterable by event type
-2. **Replay evidence** — what the file can and cannot support for replaying the session
+2. **Insights** — session at a glance: wall clock, tool leaderboard, event mix, reasoning visibility, heaviest events
 3. **Raw schema** — record shapes observed plus the normalized event JSON
 
 ## Development
