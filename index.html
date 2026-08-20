@@ -19,7 +19,7 @@
   --line-2:#3a4640;
   --ink:#eef4f1;
   --muted:#9aa8a2;
-  --faint:#687771;
+  --faint:#7e8d86;
   --accent:#42d392;
   --accent-2:#7cb7ff;
   --accent-dim:#2a8f64;
@@ -58,7 +58,7 @@ button:focus-visible,.source:focus-visible{outline:2px solid var(--accent-2);out
   border-bottom:1px solid var(--line);
 }
 .brand{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:0}
-.brand .dot{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 18px #42d39288}
+.brand .dot{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
 .brand .path{color:var(--faint);font-weight:400}
 .topbar .spacer{flex:1}
 .tabs{display:none;gap:4px;background:#0b0e0c;border:1px solid var(--line);border-radius:8px;padding:3px}
@@ -85,10 +85,10 @@ button:focus-visible,.source:focus-visible{outline:2px solid var(--accent-2);out
 .hero-intro p{margin:0;color:var(--muted);font-size:17px;max-width:680px}
 .source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:34px 0 18px}
 .source{
-  min-width:0;text-align:left;cursor:pointer;position:relative;
+  min-width:0;text-align:left;position:relative;
   background:linear-gradient(180deg,#1a201d 0,#121713 100%);
   border:1px solid var(--line);border-radius:8px;
-  padding:18px 18px 16px;transition:background .16s,border-color .16s,transform .16s,box-shadow .16s;
+  padding:18px 18px 16px;
   display:flex;flex-direction:column;gap:8px;
   box-shadow:0 1px 0 #ffffff08 inset;
   overflow:hidden;
@@ -97,16 +97,9 @@ button:focus-visible,.source:focus-visible{outline:2px solid var(--accent-2);out
   content:"";position:absolute;inset:0 auto 0 0;width:3px;
   background:var(--source-color,var(--accent));opacity:.6;
 }
-.source:hover{border-color:var(--line-2);transform:translateY(-1px);box-shadow:0 14px 38px #0005}
-.source.active{border-color:#42d39288;background:linear-gradient(180deg,#1c2620 0,#121914 100%);box-shadow:0 0 0 1px #42d39255,0 18px 50px #0007}
 .source[data-source="codex"]{--source-color:var(--accent)}
 .source[data-source="claude"]{--source-color:var(--c-instruction)}
 .source[data-source="agy"]{--source-color:var(--accent-2)}
-.source .check{
-  position:absolute;top:15px;right:15px;width:16px;height:16px;border-radius:50%;
-  border:1.5px solid var(--line-2);
-}
-.source.active .check{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 3px #15201a}
 .source strong{font-size:16px;letter-spacing:0}
 .source .hint{color:var(--muted);font-size:12.5px;overflow-wrap:anywhere;line-height:1.5}
 .source .hint.mono{
@@ -127,7 +120,7 @@ button:focus-visible,.source:focus-visible{outline:2px solid var(--accent-2);out
 .primary{
   border:0;background:linear-gradient(180deg,#5be4a6,#36bd7e);color:#04110a;border-radius:8px;
   padding:11px 18px;font-weight:760;cursor:pointer;font-size:14.5px;
-  box-shadow:0 10px 24px #1ca36b3d, inset 0 1px 0 #ffffff70;
+  box-shadow:0 8px 20px #0007, inset 0 1px 0 #ffffff70;
 }
 .primary:hover{filter:brightness(1.07)}
 .import-row .format-hint{color:var(--muted);font-size:13px}
@@ -197,7 +190,7 @@ button:focus-visible,.source:focus-visible{outline:2px solid var(--accent-2);out
 .event-title{min-width:0}
 .event-title strong{font-size:14.5px}
 .badge{
-  font-size:11px;letter-spacing:0;color:var(--faint);
+  font-size:11.5px;letter-spacing:0;color:var(--faint);
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;margin-top:2px;
 }
 .event.message .badge b{color:var(--c-message)}
@@ -220,7 +213,7 @@ pre{
   box-shadow:inset 0 1px 18px #0005;
 }
 details summary{cursor:pointer;color:var(--muted);padding-top:8px;font-size:13px}
-details summary:hover{color:var(--muted)}
+details summary:hover{color:var(--ink)}
 .collapsed-note{
   margin-top:10px;padding:8px 12px;background:#0e120f;border:1px dashed var(--line);
   border-radius:7px;color:var(--faint);font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -304,8 +297,48 @@ details summary:hover{color:var(--muted)}
 .find .rows button:hover{color:var(--accent);border-color:var(--accent-dim)}
 
 /* jump flash */
-@keyframes flashfade{0%,55%{outline-color:var(--accent);box-shadow:0 0 0 4px #42d39222}100%{outline-color:transparent;box-shadow:none}}
+@keyframes flashfade{0%,55%{outline-color:var(--accent)}100%{outline-color:transparent}}
 .event.flash{outline:2px solid transparent;outline-offset:2px;animation:flashfade 1.6s ease-out}
+.event[tabindex]:focus{outline:none}
+.event[tabindex]:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+
+/* search */
+.search-row{display:flex;gap:10px;align-items:center;margin:14px 0 0}
+.search-row input{
+  flex:1;max-width:420px;background:#0b0e0c;border:1px solid var(--line);color:var(--ink);
+  border-radius:8px;padding:9px 13px;font:inherit;font-size:14px;
+}
+.search-row input::placeholder{color:var(--faint)}
+.search-row input:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-color:var(--line-2)}
+.search-row .search-count{font-size:12.5px;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.event.ghost.search-ghost{cursor:default}
+.event.ghost.search-ghost .event-title strong::after{content:" · no match"}
+
+/* capability panel */
+.caps{display:flex;flex-direction:column;margin-top:4px}
+.cap-row{display:grid;grid-template-columns:minmax(140px,220px) 96px 1fr;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.cap-row:last-child{border-bottom:0}
+.cap-row .cap-name{font-weight:600}
+.cap-pill{justify-self:start;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 10px;border:1px solid;white-space:nowrap}
+.cap-pill.captured{color:var(--accent);border-color:#42d39244;background:#42d39210}
+.cap-pill.partial{color:#e7d28b;border-color:#f2c94c3d;background:#f2c94c10}
+.cap-pill.not-observed{color:#f0a9b8;border-color:#ff6b8640;background:#ff6b860f}
+.cap-row .cap-ev{color:var(--muted);font-size:13px}
+
+/* interactive resets for jump targets */
+.density button{flex:1;min-width:2px;border:0;padding:0;cursor:pointer;opacity:.85;border-radius:0}
+.density button:hover{opacity:1}
+.density button.fail{box-shadow:inset 0 -8px 0 var(--c-error)}
+button.moment{width:100%;background:none;border:1px solid transparent;text-align:left;font:inherit}
+.flow button.node{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.event.ghost:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.busy-note{color:var(--muted);font-size:13px}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
 
 /* switcher */
 .switcher{
@@ -332,9 +365,11 @@ details summary:hover{color:var(--muted)}
   .event-actions{justify-content:flex-start}
   .badge{white-space:normal}
   .bar-row{grid-template-columns:minmax(70px,130px) 1fr 48px}
-  .tabs{display:none !important}
-  .topbar{gap:10px}
+  .topbar{gap:10px;flex-wrap:wrap}
+  .tabs.visible{width:100%;order:3;overflow-x:auto;justify-content:flex-start}
   .brand{font-size:12.5px}
+  .cap-row{grid-template-columns:1fr 96px;grid-template-rows:auto auto}
+  .cap-row .cap-ev{grid-column:1 / -1}
   .import-row{align-items:stretch}
   .primary{width:100%}
   .switcher{bottom:12px;width:calc(100vw - 24px);justify-content:space-between}
@@ -346,9 +381,10 @@ details summary:hover{color:var(--muted)}
 <div class="topbar">
   <div class="brand mono"><span class="dot"></span>agent-trace-viewer<span class="path" id="brand-path"></span></div>
   <div class="spacer"></div>
-  <div class="tabs" id="tabs"></div>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Trace views"></div>
   <button id="reset-btn">New trace</button>
 </div>
+<div id="live-region" class="sr-only" role="status" aria-live="polite"></div>
 
 <main class="shell">
   <section id="empty">
@@ -357,33 +393,30 @@ details summary:hover{color:var(--muted)}
       <p>Open a local session trace from Codex, Claude Code, or Antigravity and inspect the full trajectory — instructions, messages, reasoning, tool calls, results, and captured state.</p>
     </div>
 
-    <div class="source-grid" role="radiogroup" aria-label="Trace source">
-      <div class="source active" data-source="codex" role="radio" aria-checked="true" tabindex="0">
-        <span class="check"></span>
+    <div class="source-grid">
+      <div class="source" data-source="codex">
         <strong>Codex</strong>
         <span class="hint mono">~/.codex/sessions/*.jsonl</span>
         <span class="hint">Typed rollout records with encrypted reasoning payloads and readable summaries.</span>
-        <button class="sample-btn" data-sample="codex">▸ Try a sample trace</button>
+        <button class="sample-btn" data-sample="codex"><span aria-hidden="true">▸ </span>Try a sample trace</button>
       </div>
-      <div class="source" data-source="claude" role="radio" aria-checked="false" tabindex="0">
-        <span class="check"></span>
+      <div class="source" data-source="claude">
         <strong>Claude Code</strong>
         <span class="hint mono">~/.claude/projects/&lt;project&gt;/*.jsonl</span>
         <span class="hint">UUID-linked messages with plaintext thinking blocks and file-history snapshots.</span>
-        <button class="sample-btn" data-sample="claude">▸ Try a sample trace</button>
+        <button class="sample-btn" data-sample="claude"><span aria-hidden="true">▸ </span>Try a sample trace</button>
       </div>
-      <div class="source" data-source="agy" role="radio" aria-checked="false" tabindex="0">
-        <span class="check"></span>
+      <div class="source" data-source="agy">
         <strong>Antigravity</strong>
         <span class="hint mono">brain/&lt;conv&gt;/.system_generated/logs/transcript_full.jsonl</span>
         <span class="hint">Planner step records with thinking, tool calls, and sequential results.</span>
-        <button class="sample-btn" data-sample="agy">▸ Try a sample trace</button>
+        <button class="sample-btn" data-sample="agy"><span aria-hidden="true">▸ </span>Try a sample trace</button>
       </div>
     </div>
 
     <div class="import-row">
-      <button id="import" class="primary">Import a Codex trace</button>
-      <span id="format-hint" class="format-hint">Choose a .jsonl or .json file</span>
+      <button id="import" class="primary">Import a trace</button>
+      <span id="format-hint" class="format-hint">Choose a .jsonl or .json file — the agent format is detected automatically</span>
     </div>
     <input id="file" type="file" accept=".jsonl,.json,application/json" hidden>
 
@@ -415,10 +448,9 @@ details summary:hover{color:var(--muted)}
 
 <script>
 'use strict';
-let selectedSource='codex';let session=null;let selectedKinds=null;const collapsedEvents=new Set();
+let session=null;let selectedKinds=null;let searchQuery='';const collapsedEvents=new Set();
+const AUTO_COLLAPSE_CHARS=20000;
 const variants=[['timeline','Timeline'],['insights','Insights'],['privacy','Privacy scan'],['schema','Raw schema']];
-const sourceNames={codex:'Codex',claude:'Claude Code',agy:'Antigravity'};
-const sourceHints={codex:'Choose a .jsonl or .json file',claude:'Choose a .jsonl file',agy:'Choose transcript_full.jsonl for untruncated tool output'};
 const kindColors={message:'var(--c-message)',instruction:'var(--c-instruction)',tool_call:'var(--c-tool)',tool_result:'var(--c-tool)',reasoning:'var(--c-reasoning)',context:'var(--c-context)',state:'var(--c-context)',metadata:'var(--c-context)',unknown:'var(--c-context)'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pretty=v=>typeof v==='string'?v:JSON.stringify(v,null,2);
@@ -427,7 +459,7 @@ function blocksText(value){if(typeof value==='string')return value;if(!Array.isA
 function evt(kind,index,title,extra={}){return{kind,index,title,...extra}}
 function count(items,key){return items.reduce((out,item)=>(out[item[key]]=(out[item[key]]||0)+1,out),{})}
 function topSchema(rows,getSubtype){const result={};rows.forEach(row=>{const key=`${row?.type||'unknown'}:${getSubtype(row)||'-'}`;result[key]=(result[key]||0)+1});return result}
-function parseInput(text,source){if(source==='agy'&&text.startsWith('SQLite format 3'))throw new Error('Antigravity conversation .db files contain protobuf step payloads and cannot be read as JSON. Select an agy --output-format stream-json capture instead.');try{const value=JSON.parse(text);if(Array.isArray(value))return value;if(value&&Array.isArray(value.items))return value.items;return[value]}catch{const rows=text.split(/\r?\n/).filter(line=>line.trim()).map((line,index)=>{try{return JSON.parse(line)}catch(error){throw new Error(`Line ${index+1} is not valid JSON: ${error.message}`)}});if(!rows.length)throw new Error('The selected file is empty.');return rows}}
+function parseInput(text){if(text.startsWith('SQLite format 3'))throw new Error('This is an Antigravity conversation .db file — it holds protobuf step payloads that cannot be read as JSON. Open brain/<conversation>/.system_generated/logs/transcript_full.jsonl instead.');try{const value=JSON.parse(text);if(Array.isArray(value))return value;if(value&&Array.isArray(value.items))return value.items;return[value]}catch{const rows=text.split(/\r?\n/).filter(line=>line.trim()).map((line,index)=>{try{return JSON.parse(line)}catch(error){throw new Error(`Line ${index+1} is not valid JSON: ${error.message}`)}});if(!rows.length)throw new Error('The selected file is empty.');return rows}}
 function parseCodex(rows,file){if(!rows.some(row=>row?.type==='session_meta'||row?.type==='response_item'))throw new Error('This does not look like a Codex session. Try selecting the correct source.');const events=[];const tools={};let metadata={};let baseLength=0;let encrypted=0;let summaries=0;let plaintext=0;let nested=0;rows.forEach((row,i)=>{const index=i+1,p=row?.payload||{},t=p?.type,time=row?.timestamp||p?.timestamp;if(row?.type==='session_meta'){metadata=p;const base=p.base_instructions;if(typeof base==='string'&&base){baseLength=base.length;events.push(evt('instruction',index,'Base instructions',{timestamp:time,role:'system',text:base}));}if(p.dynamic_tools!==undefined)events.push(evt('context',index,'Dynamic tool definitions',{timestamp:time,data:p.dynamic_tools}));const rest={...p};delete rest.base_instructions;delete rest.dynamic_tools;events.push(evt('metadata',index,'Session metadata',{timestamp:time,data:rest}));}else if(row?.type==='response_item'&&t==='message'){const role=p.role||'unknown';events.push(evt(role==='developer'||role==='system'?'instruction':'message',index,`${role[0]?.toUpperCase()||''}${role.slice(1)} message`,{timestamp:time,role,text:blocksText(p.content),content_types:types(p.content)}));}else if(row?.type==='response_item'&&(t==='custom_tool_call'||t==='function_call')){const name=String(p.name||'unknown tool');let input=p.input??p.arguments;let nestedNames=[];if(name==='functions.exec'&&typeof input==='string')nestedNames=[...input.matchAll(/\btools\.([A-Za-z0-9_]+)\s*\(/g)].map(m=>m[1]);if(typeof input==='string'){try{input=JSON.parse(input)}catch{}}const shown=nestedNames.length?`${name} → ${[...new Set(nestedNames)].join(', ')}`:name;if(nestedNames.length){nested+=nestedNames.length;nestedNames.forEach(n=>tools[`${name} → ${n}`]=(tools[`${name} → ${n}`]||0)+1)}else tools[name]=(tools[name]||0)+1;events.push(evt('tool_call',index,shown,{timestamp:time,call_id:p.call_id,data:input,nested_tools:nestedNames}));}else if(row?.type==='response_item'&&(t==='custom_tool_call_output'||t==='function_call_output'))events.push(evt('tool_result',index,'Tool result',{timestamp:time,call_id:p.call_id,data:p.output}));else if(row?.type==='response_item'&&t==='reasoning'){const summary=blocksText(p.summary||[]);encrypted+=Number(Boolean(p.encrypted_content));summaries+=Number(Boolean(summary));events.push(evt('reasoning',index,summary?'Reasoning summary':'Encrypted reasoning',{timestamp:time,text:summary||'[Encrypted payload present; its reasoning text is not readable from this file.]',encrypted:Boolean(p.encrypted_content)}));}else if(row?.type==='event_msg'&&t==='agent_reasoning'){plaintext++;events.push(evt('reasoning',index,'Displayed reasoning event',{timestamp:time,text:p.text||'',encrypted:false}));}else if(row?.type==='turn_context')events.push(evt('context',index,'Turn context',{timestamp:time,data:p}));else if(row?.type==='world_state')events.push(evt('state',index,'World state',{timestamp:time,data:p}));});const developer=events.filter(e=>e.kind==='instruction'&&e.role==='developer').length;const matrix={'Initial instructions':{status:baseLength||developer?'captured':'not observed',evidence:`base instructions: ${baseLength.toLocaleString()} chars; developer messages: ${developer}; instruction bodies are displayed in full`},'User and assistant messages':{status:'captured',evidence:'typed response_item message records'},'Tool calls and results':{status:Object.keys(tools).length?'captured':'not observed',evidence:`${Object.values(tools).reduce((a,b)=>a+b,0)} displayed calls; ${nested} nested calls decoded from functions.exec source`},'Reasoning':{status:'partial',evidence:`${encrypted} encrypted payloads; ${summaries} readable summaries; ${plaintext} displayed reasoning events`},'Model and run configuration':{status:'captured',evidence:'session metadata plus per-turn context'},'Filesystem and external state':{status:'partial',evidence:'world state and tool outputs may be present, but not a complete filesystem snapshot'},'Subagent topology':{status:'partial',evidence:'agent tool calls and parent metadata may be present, but child sessions are separate files'}};return finish('Codex',file,events,metadata,topSchema(rows,r=>r?.payload?.type),tools,matrix)}
 function parseClaude(rows,file){if(!rows.some(row=>row?.type==='assistant'&&row?.message))throw new Error('This does not look like a Claude Code session. Try selecting the correct source.');const events=[];const tools={};const models={};const attachments={};let sidechains=0,snapshots=0,thinking=0;const metadata={};rows.forEach((row,i)=>{const index=i+1,time=row?.timestamp;sidechains+=Number(Boolean(row?.isSidechain));for(const field of ['cwd','gitBranch','sessionId','version','entrypoint'])if(row?.[field]!==undefined&&metadata[field]===undefined)metadata[field]=row[field];if(row?.type==='user'||row?.type==='assistant'){const message=row.message||{},blocks=message.content;if(row.type==='assistant'&&message.model)models[message.model]=(models[message.model]||0)+1;if(typeof blocks==='string')events.push(evt('message',index,`${row.type[0].toUpperCase()}${row.type.slice(1)} message`,{timestamp:time,role:row.type,text:blocks,content_types:['text']}));else if(Array.isArray(blocks)){const texts=[];blocks.forEach(block=>{if(!block||typeof block!=='object')return;if(block.type==='text')texts.push(block.text||'');else if(block.type==='thinking'){thinking++;events.push(evt('reasoning',index,'Thinking block',{timestamp:time,text:block.thinking||'',encrypted:false}));}else if(block.type==='tool_use'){const name=String(block.name||'unknown tool');tools[name]=(tools[name]||0)+1;events.push(evt('tool_call',index,name,{timestamp:time,call_id:block.id,data:block.input,caller:block.caller}));}else if(block.type==='tool_result')events.push(evt('tool_result',index,'Tool result',{timestamp:time,call_id:block.tool_use_id,data:block.content,error:Boolean(block.is_error)}));});if(texts.length)events.push(evt('message',index,`${row.type[0].toUpperCase()}${row.type.slice(1)} message`,{timestamp:time,role:row.type,text:texts.join('\n\n'),content_types:types(blocks)}));}}else if(row?.type==='attachment'){const a=row.attachment||{},name=String(a.type||'unknown');attachments[name]=(attachments[name]||0)+1;events.push(evt('context',index,`Attachment: ${name}`,{timestamp:time,data:a}));}else if(row?.type==='file-history-snapshot'){snapshots++;events.push(evt('state',index,'File history snapshot',{timestamp:time,data:row.snapshot}));}else if(row?.type==='mode'||row?.type==='permission-mode')events.push(evt('context',index,row.type.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase()),{timestamp:time,data:row}));});metadata.models=models;metadata.attachment_types=attachments;const matrix={'Initial instructions':{status:'partial',evidence:'no equivalent top-level system-prompt record observed; skills, MCP instructions, hooks, and command context can appear as full attachments or messages'},'User and assistant messages':{status:'captured',evidence:'typed messages with UUID parent links'},'Tool calls and results':{status:Object.keys(tools).length?'captured':'not observed',evidence:`${Object.values(tools).reduce((a,b)=>a+b,0)} calls across ${Object.keys(tools).length} tool names`},'Reasoning':{status:thinking?'captured':'not observed',evidence:`${thinking} plaintext thinking blocks in this file`},'Model and run configuration':{status:'captured',evidence:`models: ${Object.keys(models).join(', ')||'not observed'}; mode and permission records may be present`},'Filesystem and external state':{status:'partial',evidence:`${snapshots} file-history snapshot records plus tool results; not a complete standalone filesystem`},'Subagent topology':{status:sidechains?'partial':'not observed',evidence:`${sidechains} sidechain records; parent UUIDs and caller metadata can link some activity`}};return finish('Claude Code',file,events,metadata,topSchema(rows,r=>Array.isArray(r?.message?.content)?r.message.content.map(b=>b?.type||'unknown').join(','):typeof r?.message?.content==='string'?'text':''),tools,matrix)}
 function parseAgy(rows,file){
@@ -470,20 +502,33 @@ function parseAgy(rows,file){
 function finish(source,file,events,metadata,schema,tools,matrix){return{source,file:file.name,size:file.size,events,metadata,schema,tools,matrix,counts:count(events,'kind')}}
 
 /* ---------- rendering ---------- */
-function hero(s){return`<div class="hero"><div class="panel"><h2>${esc(s.source)}</h2><div class="muted mono" style="font-size:12.5px">${esc(s.file)} · ${(s.size/1024).toFixed(1)} KB</div><p style="margin:10px 0 0">This file produced <strong style="color:var(--accent)">${s.events.length}</strong> normalized events. It is evidence about this exact file and client version, not a permanent format contract.</p></div><div class="panel"><h3>Captured events</h3><div class="stats">${Object.entries(s.counts).map(([k,v])=>`<div class="stat"><strong>${v}</strong><span>${esc(k.replaceAll('_',' '))}</span></div>`).join('')}</div></div></div>`}
+function hero(s){const tiny=s.events.length<3?`<p style="margin:8px 0 0;color:#e7d28b;font-size:13px">This file parsed, but it holds almost no events — it may not be a full session trace.</p>`:'';return`<div class="hero"><div class="panel"><h2>${esc(s.source)}</h2><div class="muted mono" style="font-size:12.5px">${esc(s.file)} · ${(s.size/1024).toFixed(1)} KB</div><p style="margin:10px 0 0">This file produced <strong style="color:var(--accent)">${s.events.length}</strong> normalized events. It is evidence about this exact file and client version, not a permanent format contract.</p>${tiny}</div><div class="panel"><h3>Captured events</h3><div class="stats">${Object.entries(s.counts).map(([k,v])=>`<div class="stat"><strong>${v}</strong><span>${esc(k.replaceAll('_',' '))}</span></div>`).join('')}</div></div></div>`}
+function sessionStart(s){for(const e of s.events){if(e.timestamp){const t=Date.parse(e.timestamp);if(!Number.isNaN(t))return t}}return NaN}
+function fmtOffset(ms){if(!Number.isFinite(ms)||ms<0)return '';const s=ms/1000;if(s<1)return '+0s';if(s<600)return `+${s.toFixed(1)}s`;const m=Math.floor(s/60);if(m<600)return `+${m}m${String(Math.round(s%60)).padStart(2,'0')}s`;return `+${Math.floor(m/60)}h${m%60}m`}
+function matchesSearch(e,q){if(!q)return true;const hay=(e.title+'\n'+eventText(e)).toLowerCase();return hay.includes(q)}
 function timeline(s){
   const kinds=[...new Set(s.events.map(e=>e.kind))];
   if(selectedKinds===null)selectedKinds=new Set(kinds);
   const allSelected=kinds.every(kind=>selectedKinds.has(kind));
+  const q=searchQuery.trim().toLowerCase();
+  const matchCount=q?s.events.filter(e=>matchesSearch(e,q)).length:s.events.length;
+  const search=`<div class="search-row"><input id="trace-search" type="search" placeholder="Search events — text, tool names, payloads…" value="${esc(searchQuery)}" aria-label="Search events">${q?`<span class="search-count">${matchCount} of ${s.events.length} match</span>`:''}</div>`;
   const filters=`<div class="filter-guide"><strong>Event types</strong><span>Deselected events remain as ghost rows so the trajectory keeps its shape.</span></div><div class="filters"><button class="${allSelected?'active':''}" data-kind="all">show all</button>${kinds.map(kind=>`<button class="${selectedKinds.has(kind)?'active':''}" data-kind="${kind}" aria-pressed="${selectedKinds.has(kind)}" style="--sw:${kindColors[kind]||'var(--accent)'}"><span class="swatch"></span>${esc(kind.replaceAll('_',' '))}</button>`).join('')}</div>`;
+  const t0=sessionStart(s);
   const events=s.events.map((e,eventIndex)=>{
-    const ghost=!selectedKinds.has(e.kind),collapsed=collapsedEvents.has(eventIndex),hasContents=e.text!==undefined||e.data!==undefined;
+    const filteredOut=!selectedKinds.has(e.kind);
+    const searchedOut=q&&!matchesSearch(e,q);
+    const ghost=filteredOut||searchedOut;
+    const collapsed=collapsedEvents.has(eventIndex),hasContents=e.text!==undefined||e.data!==undefined;
     const contentLength=(e.text===undefined?0:String(e.text).length)+(e.data===undefined?0:pretty(e.data).length);
     const actions=!ghost&&hasContents?`<button class="event-toggle" data-event-index="${eventIndex}">${collapsed?'Reveal':'Hide'}</button>`:'';
     const body=ghost?'':collapsed?`<div class="collapsed-note">Contents hidden · ${contentLength.toLocaleString()} characters</div>`:`${e.role?`<div class="role-line mono">role: ${esc(e.role)}</div>`:''}${e.text!==undefined?`<pre>${esc(e.text)}</pre>`:''}${e.data!==undefined?`<details><summary>Show structured payload</summary><pre>${esc(pretty(e.data))}</pre></details>`:''}`;
-    return `<article class="event ${e.kind}${ghost?' ghost':''}" data-kind="${e.kind}" data-event-index="${eventIndex}"><div class="event-head"><div class="event-title"><strong>${esc(e.title)}</strong><div class="badge"><b>${esc(e.kind)}</b> · row ${e.index}${e.timestamp?' · '+esc(e.timestamp):''}</div></div><div class="event-actions">${actions}</div></div>${body}</article>`;
+    const when=e.timestamp?(Number.isFinite(t0)?fmtOffset(Date.parse(e.timestamp)-t0):e.timestamp):'';
+    const interactiveGhost=filteredOut&&!searchedOut;
+    const tabAttrs=interactiveGhost?` role="button" tabindex="0" aria-label="Show hidden ${esc(e.kind)} events"`:` tabindex="-1"`;
+    return `<article class="event ${e.kind}${ghost?' ghost':''}${searchedOut?' search-ghost':''}" data-kind="${e.kind}" data-event-index="${eventIndex}"${tabAttrs}><div class="event-head"><div class="event-title"><strong>${esc(e.title)}</strong><div class="badge"><b>${esc(e.kind)}</b> · row ${e.index}${when?` · <span title="${esc(e.timestamp||'')}">${esc(when)}</span>`:''}</div></div><div class="event-actions">${actions}</div></div>${body}</article>`;
   }).join('');
-  return hero(s)+filters+`<div class="timeline">${events}</div>`;
+  return hero(s)+search+filters+`<div class="timeline">${events}</div>`;
 }
 function fmtDur(ms){if(!Number.isFinite(ms)||ms<0)return '—';if(ms<1000)return `${ms} ms`;const s=ms/1000;if(s<90)return `${s.toFixed(1)} s`;const m=Math.floor(s/60);if(m<90)return `${m} m ${Math.round(s%60)} s`;return `${Math.floor(m/60)} h ${m%60} m`}
 function fmtChars(n){return n>=100000?`${Math.round(n/1000)}k`:n>=10000?`${(n/1000).toFixed(1)}k`:n.toLocaleString()}
@@ -561,8 +606,9 @@ function insights(s){
     <div class="kpi"><strong>${esc(a.longestOut?fmtChars(a.longestOut.size):'—')}</strong><span>longest tool output</span></div>
     <div class="kpi"><strong>${esc(pause?fmtDur(pause.gap):'—')}</strong><span>longest pause</span>${pause?`<span class="note">before row ${pause.after.index}</span>`:''}</div>
   </div></div>`;
+  const caps=`<div class="panel" style="margin-top:14px"><h3>What this file captures</h3><div class="caps">${Object.entries(s.matrix).map(([name,v])=>`<div class="cap-row"><span class="cap-name">${esc(name)}</span><span class="cap-pill ${esc(v.status.replaceAll(' ','-'))}">${esc(v.status)}</span><span class="cap-ev">${esc(v.evidence)}</span></div>`).join('')}</div><p class="muted" style="margin:12px 0 0;font-size:12.5px">Grounded in this exact file and client version — load the three sample traces to compare what each agent's format records.</p></div>`;
   const failSet=new Set(a.failures.map(x=>x.i));
-  const density=`<div class="panel" style="margin-top:14px"><h3>Activity density</h3><div class="density">${s.events.map((e,i)=>`<span data-jump="${i}" class="${failSet.has(i)?'fail':''}" style="background:${kindColors[e.kind]||'var(--line-2)'}" title="${esc(e.kind)} · ${esc(e.title)} · row ${e.index}"></span>`).join('')}</div><div class="density-note">One tick per event in sequence — red underline marks failures. Click a tick to jump to it.</div></div>`;
+  const density=`<div class="panel" style="margin-top:14px"><h3>Activity density</h3><div class="density">${s.events.map((e,i)=>`<button data-jump="${i}" class="${failSet.has(i)?'fail':''}" style="background:${kindColors[e.kind]||'var(--line-2)'}" title="${esc(e.kind)} · ${esc(e.title)} · row ${e.index}" aria-label="Jump to row ${e.index}: ${esc(e.kind)} — ${esc(e.title)}"></button>`).join('')}</div><div class="density-note">One tick per event in sequence — red underline marks failures. Click a tick to jump to it.</div></div>`;
   const flowNodes=[];
   s.events.forEach((e,i)=>{
     if(e.kind==='message')flowNodes.push({label:e.role==='user'?'user':'answer',color:'var(--c-message)',i});
@@ -570,16 +616,16 @@ function insights(s){
     else if(e.kind==='tool_call'){const c=a.calls.find(c=>c.idx===i);flowNodes.push({label:e.title,color:'var(--c-tool)',i,status:c&&c.result?(c.failed?'err':'ok'):null})}
   });
   const shown=flowNodes.slice(0,150);
-  const flow=`<div class="panel" style="margin-top:14px"><h3>Tool flow</h3><div class="flow">${shown.map((n,idx)=>`<span class="node${n.status==='err'?' fail':''}" data-jump="${n.i}" style="--node-color:${n.color}"><span class="pip"></span>${esc(n.label)}${n.status?`<span class="st ${n.status}">${n.status==='ok'?'✓':'✗'}</span>`:''}</span>${idx<shown.length-1?'<span class="arrow">→</span>':''}`).join('')}${flowNodes.length>shown.length?`<span class="more">+${flowNodes.length-shown.length} more</span>`:''}</div></div>`;
+  const flow=`<div class="panel" style="margin-top:14px"><h3>Tool flow</h3><div class="flow">${shown.map((n,idx)=>`<button class="node${n.status==='err'?' fail':''}" data-jump="${n.i}" style="--node-color:${n.color}" aria-label="Jump to ${esc(n.label)}${n.status==='err'?' (failed)':''}"><span class="pip"></span>${esc(n.label)}${n.status?`<span class="st ${n.status}" aria-hidden="true">${n.status==='ok'?'✓':'✗'}</span>`:''}</button>${idx<shown.length-1?'<span class="arrow" aria-hidden="true">→</span>':''}`).join('')}${flowNodes.length>shown.length?`<span class="more">+${flowNodes.length-shown.length} more</span>`:''}</div></div>`;
   const moments=findMoments(s,a);
-  const momentsPanel=`<div class="panel"><h3>Interesting moments</h3>${moments.length?`<div class="moments">${moments.map(m=>`<div class="moment" data-jump="${jumpIdx(m.e)}" style="--m-color:${m.color}"><span class="tag">${esc(m.tag)}</span><span class="what">${esc(m.what)}</span><span class="num">row ${m.e.index}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:0">Nothing notable detected.</p>'}</div>`;
+  const momentsPanel=`<div class="panel"><h3>Interesting moments</h3>${moments.length?`<div class="moments">${moments.map(m=>`<button class="moment" data-jump="${jumpIdx(m.e)}" style="--m-color:${m.color}"><span class="tag">${esc(m.tag)}</span><span class="what">${esc(m.what)}</span><span class="num">row ${m.e.index}</span></button>`).join('')}</div>`:'<p class="muted" style="margin:0">Nothing notable detected.</p>'}</div>`;
   const kinds=Object.entries(s.counts);
   const mix=`<div class="panel"><h3>Event mix</h3><div class="mixbar">${kinds.map(([k,v])=>`<div style="flex:${v};background:${kindColors[k]||'var(--line-2)'}" title="${esc(k)}: ${v}"></div>`).join('')}</div><div class="legend">${kinds.map(([k,v])=>`<span><span class="swatch" style="background:${kindColors[k]||'var(--line-2)'}"></span>${esc(k.replaceAll('_',' '))} · ${v}</span>`).join('')}</div></div>`;
   const toolMax=Math.max(1,...Object.values(s.tools));
   const toolRows=Object.entries(s.tools).sort((a,b)=>b[1]-a[1]).slice(0,12);
   const toolPanel=`<div class="panel"><h3>Tool leaderboard</h3>${toolRows.length?`<div class="bars">${toolRows.map(([name,n])=>`<div class="bar-row"><span class="name" title="${esc(name)}">${esc(name)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${Math.max(4,Math.round(n/toolMax*100))}%"></span></span><span class="num">×${n}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:0">No tool calls in this trace.</p>'}</div>`;
   const meta=`<div class="panel" style="margin-top:14px"><h3>Run metadata</h3><pre>${esc(pretty(s.metadata))}</pre></div>`;
-  return hero(s)+kpis+density+flow+`<div class="hero" style="margin-top:14px">${momentsPanel}${mix}</div>`+`<div class="hero" style="margin-top:14px">${toolPanel}<div class="panel"><h3>Files touched</h3>${a.files.size?`<pre>${esc([...a.files].join('\n'))}</pre>`:'<p class="muted" style="margin:0">No file edits detected.</p>'}</div></div>`+meta;
+  return hero(s)+kpis+caps+density+flow+`<div class="hero" style="margin-top:14px">${momentsPanel}${mix}</div>`+`<div class="hero" style="margin-top:14px">${toolPanel}<div class="panel"><h3>Files touched</h3>${a.files.size?`<pre>${esc([...a.files].join('\n'))}</pre>`:'<p class="muted" style="margin:0">No file edits detected.</p>'}</div></div>`+meta;
 }
 const SECRET_PATTERNS=[
  {label:'Private key block',sev:'high',re:/-----BEGIN [A-Z ]*PRIVATE KEY-----/g},
@@ -618,7 +664,7 @@ function privacy(s){
   const total=totals.high+totals.medium+totals.low;
   const verdict=total?`<div class="scan-verdict">${totals.high?`<span class="sev high">${totals.high} high</span>`:''}${totals.medium?`<span class="sev medium">${totals.medium} medium</span>`:''}${totals.low?`<span class="sev low">${totals.low} low</span>`:''}<span class="muted" style="font-size:13px">distinct values matched — review each before sharing this trace or screenshots of it</span></div>`:`<div class="scan-verdict"><span class="sev clean">no matches</span><span class="muted" style="font-size:13px">none of the heuristic patterns matched — this is not a guarantee the trace is safe to share</span></div>`;
   const sevOrder={high:0,medium:1,low:2};
-  const body=groups.sort((a,b)=>sevOrder[a.sev]-sevOrder[b.sev]).map(g=>`<div class="find-group"><h4><span class="sev ${g.sev}" style="font-size:10.5px;padding:2px 9px">${g.sev}</span>${esc(g.label)}<span class="cnt">${g.finds.length} distinct value${g.finds.length===1?'':'s'}</span></h4>${g.finds.map(([value,rows])=>`<div class="find"><code title="masked">${esc(maskSecret(value))}</code><span class="rows">${[...rows].slice(0,8).map(i=>`<button data-jump="${i}">row ${s.events[i].index}</button>`).join('')}${rows.size>8?`<span class="muted" style="font-size:11px">+${rows.size-8}</span>`:''}</span></div>`).join('')}</div>`).join('');
+  const body=groups.sort((a,b)=>sevOrder[a.sev]-sevOrder[b.sev]).map(g=>`<div class="find-group"><h4><span class="sev ${g.sev}" style="font-size:11.5px;padding:2px 9px">${g.sev}</span>${esc(g.label)}<span class="cnt">${g.finds.length} distinct value${g.finds.length===1?'':'s'}</span></h4>${g.finds.map(([value,rows])=>`<div class="find"><code title="masked">${esc(maskSecret(value))}</code><span class="rows">${[...rows].slice(0,8).map(i=>`<button data-jump="${i}">row ${s.events[i].index}</button>`).join('')}${rows.size>8?`<span class="muted" style="font-size:12px">+${rows.size-8}</span>`:''}</span></div>`).join('')}</div>`).join('');
   const note=`<p class="muted" style="margin:14px 0 0;font-size:13px">Values are masked on screen; the full values remain only in your local file. The scan runs entirely in your browser — pattern-based, so treat it as a checklist, not a verdict.</p>`;
   return hero(s)+`<div class="panel"><h2>Privacy scan</h2>${verdict}${body}${note}</div>`;
 }
@@ -627,30 +673,57 @@ function jumpTo(i){
   const e=session.events[i];if(!e)return;
   if(selectedKinds&&!selectedKinds.has(e.kind))selectedKinds.add(e.kind);
   collapsedEvents.delete(i);
-  const q=new URLSearchParams(location.search);q.set('variant','timeline');history.replaceState(null,'','?'+q);
+  const q=new URLSearchParams(location.search);q.set('variant','timeline');history.pushState(null,'','?'+q);
   render();
-  requestAnimationFrame(()=>{const el=document.querySelector(`.event[data-event-index="${i}"]`);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700)}});
+  requestAnimationFrame(()=>{const el=document.querySelector(`.event[data-event-index="${i}"]`);if(el){const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});el.focus({preventScroll:true});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700)}});
 }
-function schema(s){return hero(s)+`<div class="panel"><h2>Record shapes observed</h2><div class="schema-grid">${Object.entries(s.schema).map(([k,v])=>`<div class="stat"><strong>${v}</strong><code>${esc(k)}</code></div>`).join('')}</div></div><div class="panel" style="margin-top:14px"><h2>Normalized event JSON</h2><pre>${esc(pretty(s.events))}</pre></div>`}
+function schema(s){
+  const CAP=150;
+  const slice=s.events.slice(0,CAP);
+  const capped=s.events.length>CAP;
+  const note=capped?`<p class="muted" style="margin:0 0 10px;font-size:13px">Showing the first ${CAP} of ${s.events.length} normalized events — the full data stays in your local file.</p>`:'';
+  return hero(s)+`<div class="panel"><h2>Record shapes observed</h2><div class="schema-grid">${Object.entries(s.schema).map(([k,v])=>`<div class="stat"><strong>${v}</strong><code>${esc(k)}</code></div>`).join('')}</div></div><div class="panel" style="margin-top:14px"><h2>Normalized event JSON</h2>${note}<pre>${esc(pretty(slice))}</pre></div>`;
+}
 function currentVariant(){const q=new URLSearchParams(location.search);return variants.some(v=>v[0]===q.get('variant'))?q.get('variant'):'timeline'}
+function setVariant(id){const q=new URLSearchParams(location.search);q.set('variant',id);history.pushState(null,'','?'+q);render()}
 function render(){
   if(!session)return;
   const variant=currentVariant();
+  const label=variants.find(v=>v[0]===variant)[1];
   document.getElementById('app').innerHTML=variant==='timeline'?timeline(session):variant==='insights'?insights(session):variant==='privacy'?privacy(session):schema(session);
-  document.getElementById('variant-label').textContent=variants.find(v=>v[0]===variant)[1];
+  document.getElementById('variant-label').textContent=label;
+  document.getElementById('live-region').textContent=`${label} view`;
   const tabs=document.getElementById('tabs');
-  tabs.innerHTML=variants.map(([id,label])=>`<button data-variant="${id}" class="${id===variant?'active':''}">${label}</button>`).join('');
-  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{const q=new URLSearchParams(location.search);q.set('variant',b.dataset.variant);history.replaceState(null,'','?'+q);render()});
+  tabs.innerHTML=variants.map(([id,l])=>`<button role="tab" data-variant="${id}" class="${id===variant?'active':''}" aria-selected="${id===variant}">${l}</button>`).join('');
+  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>setVariant(b.dataset.variant));
   document.querySelectorAll('[data-jump]').forEach(n=>n.onclick=()=>jumpTo(Number(n.dataset.jump)));
   if(variant!=='timeline')return;
   const kinds=[...new Set(session.events.map(e=>e.kind))];
   document.querySelectorAll('.filters button').forEach(button=>button.onclick=()=>{const kind=button.dataset.kind;if(kind==='all')selectedKinds=new Set(kinds);else if(selectedKinds.has(kind))selectedKinds.delete(kind);else selectedKinds.add(kind);render()});
   document.querySelectorAll('.event-toggle').forEach(button=>button.onclick=event=>{event.stopPropagation();const index=Number(button.dataset.eventIndex);if(collapsedEvents.has(index))collapsedEvents.delete(index);else collapsedEvents.add(index);render()});
-  document.querySelectorAll('.event.ghost').forEach(card=>card.onclick=()=>{selectedKinds.add(card.dataset.kind);render()});
+  document.querySelectorAll('.event.ghost:not(.search-ghost)').forEach(card=>{
+    const reveal=()=>{selectedKinds.add(card.dataset.kind);render()};
+    card.onclick=reveal;
+    card.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();reveal()}};
+  });
+  const searchInput=document.getElementById('trace-search');
+  if(searchInput){
+    searchInput.oninput=()=>{
+      searchQuery=searchInput.value;
+      clearTimeout(searchInput._t);
+      searchInput._t=setTimeout(()=>{
+        render();
+        const restored=document.getElementById('trace-search');
+        if(restored){restored.focus();restored.setSelectionRange(restored.value.length,restored.value.length)}
+      },160);
+    };
+  }
 }
-function cycle(delta){if(!session)return;const q=new URLSearchParams(location.search),current=variants.findIndex(v=>v[0]===(q.get('variant')||'timeline'));q.set('variant',variants[(current+delta+variants.length)%variants.length][0]);history.replaceState(null,'','?'+q);render()}
+function cycle(delta){if(!session)return;const current=variants.findIndex(v=>v[0]===currentVariant());setVariant(variants[(current+delta+variants.length)%variants.length][0])}
+addEventListener('popstate',()=>{if(session)render()});
 function showLoaded(newSession,subtitle){
-  session=newSession;selectedKinds=null;collapsedEvents.clear();
+  session=newSession;selectedKinds=null;collapsedEvents.clear();searchQuery='';
+  newSession.events.forEach((e,i)=>{if(eventSize(e)>AUTO_COLLAPSE_CHARS)collapsedEvents.add(i)});
   document.getElementById('empty').hidden=true;
   document.getElementById('loaded').hidden=false;
   document.getElementById('loaded-title').textContent=`${session.source} · ${session.file}`;
@@ -663,7 +736,7 @@ function showLoaded(newSession,subtitle){
   render();
 }
 function reset(){
-  session=null;selectedKinds=null;collapsedEvents.clear();
+  session=null;selectedKinds=null;collapsedEvents.clear();searchQuery='';
   document.getElementById('loaded').hidden=true;
   document.getElementById('empty').hidden=false;
   document.getElementById('switcher').classList.remove('visible');
@@ -674,17 +747,40 @@ function reset(){
   document.getElementById('error').style.display='none';
   history.replaceState(null,'',location.pathname);
 }
-document.querySelectorAll('.source').forEach(card=>{
-  const select=()=>{selectedSource=card.dataset.source;document.querySelectorAll('.source').forEach(x=>{const active=x===card;x.classList.toggle('active',active);x.setAttribute('aria-checked',String(active))});document.getElementById('import').textContent=`Import a ${sourceNames[selectedSource]} trace`;document.getElementById('format-hint').textContent=sourceHints[selectedSource]};
-  card.onclick=event=>{if(!event.target.classList.contains('sample-btn'))select()};
-  card.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();select()}};
-});
+function detectAndParse(rows,file){
+  const attempts=[['Codex',parseCodex],['Claude Code',parseClaude],['Antigravity',parseAgy]];
+  const errors=[];
+  for(const [name,parse] of attempts){
+    try{return parse(rows,file)}catch(e){errors.push(e instanceof Error?e.message:String(e))}
+  }
+  const specific=errors.find(m=>!m.startsWith('This does not look like'));
+  throw new Error(specific||'This file does not match any known agent trace format (Codex, Claude Code, or Antigravity). Check that you picked a session .jsonl file.');
+}
 document.getElementById('import').onclick=()=>document.getElementById('file').click();
-document.getElementById('file').onchange=async event=>{const file=event.target.files[0];if(!file)return;const error=document.getElementById('error');try{const text=await file.text(),data=parseInput(text,selectedSource);const parsed=selectedSource==='codex'?parseCodex(data,file):selectedSource==='claude'?parseClaude(data,file):parseAgy(data,file);showLoaded(parsed,'Loaded locally. Reload this page to discard the trace.')}catch(e){error.textContent=e instanceof Error?e.message:String(e);error.style.display='block';event.target.value=''}};
+document.getElementById('file').onchange=async event=>{
+  const file=event.target.files[0];if(!file)return;
+  const error=document.getElementById('error');const importBtn=document.getElementById('import');const hint=document.getElementById('format-hint');
+  error.style.display='none';
+  importBtn.disabled=true;const oldLabel=importBtn.textContent;importBtn.textContent='Reading file…';
+  hint.textContent=`Parsing ${file.name} (${(file.size/1024).toFixed(0)} KB) locally…`;
+  try{
+    const text=await file.text();
+    await new Promise(r=>setTimeout(r,30));
+    const rows=parseInput(text);
+    const parsed=detectAndParse(rows,file);
+    showLoaded(parsed,`Detected as ${parsed.source}. Loaded locally — reload this page to discard the trace.`);
+  }catch(e){
+    error.textContent=e instanceof Error?e.message:String(e);
+    error.style.display='block';event.target.value='';
+  }finally{
+    importBtn.disabled=false;importBtn.textContent=oldLabel;
+    hint.textContent='Choose a .jsonl or .json file — the agent format is detected automatically';
+  }
+};
 document.getElementById('reset-btn').onclick=reset;
 document.getElementById('prev').onclick=()=>cycle(-1);
 document.getElementById('next').onclick=()=>cycle(1);
-addEventListener('keydown',event=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable)return;if(event.key==='ArrowLeft')cycle(-1);if(event.key==='ArrowRight')cycle(1)});
+addEventListener('keydown',event=>{if(event.target!==document.body||event.metaKey||event.ctrlKey||event.altKey)return;if(event.key==='ArrowLeft')cycle(-1);if(event.key==='ArrowRight')cycle(1)});
 
 /* ---------- synthetic sample traces ---------- */
 /* Fictional but format-faithful: a small "fix the month-rollover bug" task in each format. */
